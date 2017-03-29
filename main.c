@@ -9,9 +9,11 @@ int BWWhite = 65;
 int CBlack = 22;
 int CWhite = 63;
 
-float Kp = 0.40;
-float Tp = 25;
+int Kp = 80;
+int Ki = 100;
+int Tp = 25;
 
+int egral = 0;
 int errorAmount (int inputValue) //Goes from BWWhite to BWBlack, so -15 to 15.
 {
 		return (inputValue - ((BWWhite + BWBlack) / 2));
@@ -21,6 +23,7 @@ task main()
 	while(1)
 	{
 		int error = errorAmount(SensorValue[BWSensor]);
+		egral = egral + error;
 		if (error == 0)//right error being bigger means more whitespace to the right, so steer to the left.
 		{
 			motor[motorB] = Tp;
@@ -28,7 +31,7 @@ task main()
 		}
 		else
 		{
-			int Turn = Kp * error;
+			float Turn = (Kp * error + Ki * egral) /  100;
 			motor[motorB] = Tp - Turn;
 			motor[motorC] = Tp + Turn;
 		}
