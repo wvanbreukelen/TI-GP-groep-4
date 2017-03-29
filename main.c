@@ -12,23 +12,23 @@ int CWhite = 63;
 float Kp = 0.40;
 float Tp = 25;
 
-int errorAmount (int inputValue, bool isBWSensor)
+float errorAmount (int inputValue, bool isBWSensor)
 {
 	if (isBWSensor) //We return our input minus the average of their black and white values to calculate the amount of deviance.
 	{
-		return inputValue - ((BWWhite + BWBlack) / 2);
+		return (inputValue - ((BWWhite + BWBlack) / 2)) / ((BWWhite - BWBlack) / 2); //returns a float between -1 and 1
 	}
 	else
 	{
-		return inputValue - ((CWhite + CBlack) / 2);
+		return inputValue - ((CWhite + CBlack) / 2) / ((CWhite - CBlack) / 2);
 	}
 }
 task main()
 {
 	while(1)
 	{
-		int leftError = errorAmount(SensorValue[BWSensor], true);
-		int rightError = errorAmount(SensorValue[CSensor], false);
+		float leftError = errorAmount(SensorValue[BWSensor], true);
+		float rightError = errorAmount(SensorValue[CSensor], false);
 		if (leftError < rightError)//right error being bigger means more whitespace to the right, so steer to the left.
 		{
 			float Turn = Kp * leftError;
@@ -43,7 +43,8 @@ task main()
 		}
 		else //Else, leftError == rightError
 		{
-
+				motor[motorB] = Tp;
+				motor[motorC] = Tp;
 		}
 	}
 }
