@@ -31,15 +31,15 @@ task main()
 		int rightError = errorAmount(SensorValue[CSensor], false);
 		if (leftError < rightError)//right error being bigger means more whitespace to the right, so steer to the left.
 		{
-			float Turn = Kp * rightError;
-			motor[motorB] = Tp + Turn;
-			motor[motorC] = Tp - Turn;
-		}
-		else if (leftError > rightError) //left error being bigger means there is more whitespace to the left, so we must adjust to the right.
-		{
 			float Turn = Kp * leftError;
 			motor[motorB] = Tp - Turn;
 			motor[motorC] = Tp + Turn;
+		}
+		else if (leftError > rightError) //left error being bigger means there is more whitespace to the left, so we must adjust to the right.
+		{
+			float Turn = Kp * rightError;
+			motor[motorB] = Tp + Turn;
+			motor[motorC] = Tp - Turn;
 		}
 		else //Else, leftError == rightError
 		{
