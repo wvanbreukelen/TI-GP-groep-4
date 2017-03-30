@@ -31,7 +31,6 @@ task startPID()
 	// Give PID system full CPU resources
 	hogCPU();
 
-
 	initPID();
 	int BWValue;
 	short rightSpeed = 0;
@@ -53,8 +52,11 @@ task startPID()
 		lastError = error;
 	}
 
+	// Stop motors when crossing was detected
 	motor[motorB] = 0;
 	motor[motorC] = 0;
 
+	// Stop task itself
+	// @wiebe, @dylan have a look!
 	stopTask(startPID);
 }
