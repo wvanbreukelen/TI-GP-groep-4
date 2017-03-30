@@ -46,38 +46,41 @@ task main()
     if (nSizeOfMessage > 0){
       nBTCmdRdErrorStatus = cCmdMessageRead(nRcvBuffer, nSizeOfMessage, INBOX);
       nRcvBuffer[nSizeOfMessage] = '\0';
-      string s = "";
-      stringFromChars(s, (char *) nRcvBuffer);
-      if(s=="LEFT"){
-      motor[motorB]=25;
-      motor[motorC]=-25;
-      wait1Msec(730);
-      motor[motorB]=0;
-      motor[motorC]=0;
 
-    }else if(s=="RIGHT"){
-    motor[motorB]=-25;
+      //stringFromChars(s, (char *) nRcvBuffer);
+      displayString(2, "%#X", nRcvBuffer);
+      if(nRcvBuffer==0x4c){//left
+      nMotorEncoder[motorB]=0;
+      nMotorEncoderTarget[motorB]=360;
+      motor[motorB]=25;
+      wait1Msec(1500);
+
+    }else if(nRcvBuffer==0x52){//right
+    nMotorEncoder[motorC]=0;
+    nMotorEncoderTarget[motorC]=360;
     motor[motorC]=25;
-    wait1Msec(730);
-    motor[motorB]=0;
-    motor[motorC]=0;
+    wait1Msec(1500);
   }
-  else if(s=="DOWN"){
-      motor[motorB]=25;
-      motor[motorC]=-25;
-  wait1Msec(1460);
-      motor[motorB]=0;
-      motor[motorC]=0;
-}
-else if(s=="FIRE"){
+  else if(nRcvBuffer==0x44){//down
+  	nMotorEncoder[motorC]=0;
 
+    nMotorEncoderTarget[motorC]=720;
+
+    motor[motorC]=25;
+
+    wait1Msec(1500);
+}
+else if(nRcvBuffer==0x46){//fire
+			nMotorEncoder[motorC]=0;
+			nMotorEncoder[motorB]=0;
+      nMotorEncoderTarget[motorC]=360;
+      nMotorEncoderTarget[motorC]=360;
       motor[motorB]=100;
       motor[motorC]=100;
-      wait1Msec(1000);
-      motor[motorB]=0;
-      motor[motorC]=0;
+      wait1Msec(1500);
+
 }
-      displayCenteredBigTextLine(4, s);
+
 
     }
     wait1Msec(100);
