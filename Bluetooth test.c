@@ -10,18 +10,56 @@
 // checking.
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Check to see if a message is available
 
+    /**nSizeOfMessage = cCmdMessageGetSize(INBOX);
+
+    if (nSizeOfMessage > kMaxSizeOfMessage)
+      nSizeOfMessage = kMaxSizeOfMessage;
+    if (nSizeOfMessage > 0){
+      nBTCmdRdErrorStatus = cCmdMessageRead(nRcvBuffer, nSizeOfMessage, INBOX);
+      stringFromChars(s, (char *) nRcvBuffer);
+      long nLastXmitTimeStamp = nPgmTime;
+			long nDeltaTime         = 0;
+
+     **/
 #pragma platform(NXT)
 
-long nLastXmitTimeStamp = nPgmTime;
-long nDeltaTime         = 0;
 
 const int kMaxSizeOfMessage = 30;
 const int INBOX = 5;
+/**
+	buffer = an ubyte array
+	nMaxBufferSize = maximum size of the message
+
+	return the hexadecimal code of the message
+**/
+
+int readBluetoothData(ubyte* buffer, int nMaxBufferSize)
+{
+	int sizeOfMessage = cCmdMessageGetSize(INBOX);
 
 
+    if (sizeOfMessage > nMaxBufferSize)
+      sizeOfMessage = nMaxBufferSize;
+    if (sizeOfMessage > 0)
+      cCmdMessageRead(buffer, sizeOfMessage, INBOX);
 
+     return sizeOfMessage;
 
+}
+/**
+	m = The motor that it needs to turn
+
+	return void
+**/
+void robotTurn(short m,short deg){
+	nMotorEncoder[m]=0;
+  nMotorEncoderTarget[m]=deg;
+  motor[m]=25;
+
+  while(nMotorRunState(m) != runStateIdle){}
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -31,60 +69,29 @@ const int INBOX = 5;
 
 task main()
 {
-  TFileIOResult nBTCmdRdErrorStatus;
-  int nSizeOfMessage;
   ubyte nRcvBuffer[kMaxSizeOfMessage];
 
   while (true)
   {
-    // Check to see if a message is available
 
-    nSizeOfMessage = cCmdMessageGetSize(INBOX);
+    if (readBluetoothData(nRcvBuffer, kMaxSizeOfMessage) > 0)
+    {
 
-    if (nSizeOfMessage > kMaxSizeOfMessage)
-      nSizeOfMessage = kMaxSizeOfMessage;
-    if (nSizeOfMessage > 0){
-      nBTCmdRdErrorStatus = cCmdMessageRead(nRcvBuffer, nSizeOfMessage, INBOX);
-      nRcvBuffer[nSizeOfMessage] = '\0';
+    	if(nRcvBuffer==0x4c){						//Turn left
+    		robotTurn(motorB,355);
+    	}
+    	else if(nRcvBuffer==0x52){			//Turn right
+    		robotTurn(motorC,355);
+ 			}
+  		else if(nRcvBuffer==0x44){			//Turn around
+  			nSyncedMotors=synchCB;
+    		nSyncedTurnRatio=-100;
+  			robotTurn(motorC,355);
+  			nSyncedMotors =synchNone;
 
-      //stringFromChars(s, (char *) nRcvBuffer);
-      displayString(2, "%#X", nRcvBuffer);
-      if(nRcvBuffer==0x4c){//left
-      nMotorEncoder[motorB]=0;
-      nMotorEncoderTarget[motorB]=360;
-      motor[motorB]=25;
-      wait1Msec(1500);
-
-    }else if(nRcvBuffer==0x52){//right
-    nMotorEncoder[motorC]=0;
-    nMotorEncoderTarget[motorC]=360;
-    motor[motorC]=25;
-    wait1Msec(1500);
-  }
-  else if(nRcvBuffer==0x44){//down
-  	nMotorEncoder[motorC]=0;
-
-    nMotorEncoderTarget[motorC]=720;
-
-    motor[motorC]=25;
-
-    wait1Msec(1500);
-}
-else if(nRcvBuffer==0x46){//fire
-			nMotorEncoder[motorC]=0;
-			nMotorEncoder[motorB]=0;
-      nMotorEncoderTarget[motorC]=360;
-      nMotorEncoderTarget[motorC]=360;
-      motor[motorB]=100;
-      motor[motorC]=100;
-      wait1Msec(1500);
-
-}
-
-
-    }
-    wait1Msec(100);
-
-  }
+    	}
+  	wait1Msec(100);
+		}
+	}
   return;
 }
