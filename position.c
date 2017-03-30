@@ -1,5 +1,3 @@
-#include <display.c>
-
 typedef struct {
 	short x, y;
 	char orientation;
@@ -96,20 +94,4 @@ void displayPosition(Position pos)
 	displayString(1, "x: %d", pos.x);
 	displayString(2, "y: %d", pos.y);
 	displayString(3, "Orientation: %c", pos.orientation);
-}
-
-task main() {
-	Position pos;
-	initPosition(pos);
-
-	displayPosition(pos);
-
-	wait1Msec(2000);
-
-	moveRight(pos, motorB);
-	moveDown(pos, motorB, motorC);
-
-	displayPosition(pos);
-
-	wait1Msec(2000);
 }
