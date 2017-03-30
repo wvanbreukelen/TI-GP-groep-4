@@ -36,11 +36,11 @@ task startPID()
 	while(!((BWValue = SensorValue[BWSensor]) <= BWBlack + 5 && SensorValue[CSensor] <= CBlack + 5)) //If both sensors are black, break.
 	{
 		short error = errorAmount(BWValue); //First we calculate the position based on our sensors.
-		short derivative = error - lastError;
-		short Turn = (Kp * error + Kd * derivative) / 10;
-		short rightSpeed = Tp - Turn;
+		short derivative = error - lastError; //Next, we calculate the derivative based on our last error.
+		short Turn = (Kp * error + Kd * derivative) / 10; //Then we calculate by which amount the two speeds must differ.
+		short rightSpeed = Tp - Turn; //We subtract the turn from the speed of our right wheel, making us turn right. Unless turn is negative, then we turn left.
 		short leftSpeed = Tp + Turn;
-		if (rightSpeed > maxSpeed) rightspeed = maxSpeed;
+		if (rightSpeed > maxSpeed) rightspeed = maxSpeed; //limiting speed to boundaries.
 		else if (rightSpeed < 0) rightSpeed = 0;
 		if (leftSpeed > maxSpeed) leftSpeed = maxSpeed;
 		else if (leftSpeed < 0) leftSpeed = 0;
