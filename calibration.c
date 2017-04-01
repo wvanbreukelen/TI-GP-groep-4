@@ -6,9 +6,6 @@ typedef struct
 	short BWWhite;
 } Calibration;
 
-short BWValue = -1;
-short CValue = -1;
-
 void findBoundaries(Calibration cal)
 {
 	BWValue = SensorValue[BWSensor];
@@ -30,8 +27,11 @@ void findBoundaries(Calibration cal)
 		cal.CBlack = CValue;
 	}
 }
-void calibrate(Calibration cal)
+Calibration calibrate()
 {
+	Calibration cal;
+	short BWValue = -1;
+	short CValue = -1;
 	nSyncedMotors = synchBC;
 	nSyncedTurnRatio = -100;
 	nMotorEncoder[motorB] = 0;
@@ -59,11 +59,5 @@ void calibrate(Calibration cal)
 	{
 		findBoundaries(cal);
 	}
-}
-
-task main()
-{
-	Calibration calb;
-
-	calibrate(calb);
+	return cal;
 }

@@ -7,11 +7,11 @@
 #include <display.c>
 #include <position.c>
 #include <PID.c>
+#include <calibration.c>
 
 task main()
 {
-	wait1Msec(500);
-
+	initPID(calibrate());
 	startTask(startPID);
 
 }

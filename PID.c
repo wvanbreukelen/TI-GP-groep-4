@@ -1,4 +1,5 @@
 #define maxSpeed 100
+#include <calibration.c>
 
 short BWBlack = 35;
 short BWWhite = 60;
@@ -15,10 +16,10 @@ short Tp = 25;
 short lastError = 0;
 short integral = 0;
 
-void initPID()
+void initPID(Calibration cal)
 {
-	BWOffset = (BWWhite + BWBlack) / 2;
-	COffset = (CWhite + CBlack) / 2;
+	BWOffset = (cal.BWWhite + cal.BWBlack) / 2;
+	COffset = (cal.CWhite + cal.CBlack) / 2;
 }
 
 short errorAmountPID (int inputValue)
@@ -31,7 +32,6 @@ task startPID()
 	// Give PID system full CPU resources
 	hogCPU();
 
-	initPID();
 	int BWValue;
 	short rightSpeed = 0;
 	short leftSpeed = 0;
