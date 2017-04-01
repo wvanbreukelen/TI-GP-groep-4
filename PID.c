@@ -16,15 +16,24 @@ short Tp = 25;
 short lastError = 0;
 short integral = 0;
 
+/**
+ * Initialise PID task
+ * @param cal Calibration struct pointer
+ */
 void initPID(Calibration* cal)
 {
 	BWOffset = (cal->BWWhite + cal->BWBlack) / 2;
 	COffset = (cal->CWhite + cal->CBlack) / 2;
 }
 
-short errorAmountPID (int inputValue)
+/**
+ * Calculate error amount for specified sensor value
+ * @param sValue Sensor value
+ * @return Error amount as short
+ */
+short errorAmountPID (short sValue)
 {
-		return (inputValue - BWOffset);
+	return (sValue - BWOffset);
 }
 
 task startPID()
