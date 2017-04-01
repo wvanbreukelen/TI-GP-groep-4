@@ -6,28 +6,30 @@ typedef struct
 	short BWWhite;
 } Calibration;
 
-void findBoundaries(Calibration cal)
+void findBoundaries(Calibration* cal)
 {
-	BWValue = SensorValue[BWSensor];
-	CValue = SensorValue[CSensor];
-	if (BWValue > cal.BWWhite)
+	short BWValue = SensorValue[BWSensor];
+	short CValue = SensorValue[CSensor];
+
+	if (BWValue > cal->BWWhite)
 	{
-		cal.BWWhite = BWValue;
+		cal->BWWhite = BWValue;
 	}
-	else if (BWValue < cal.BWBlack)
+	else if (BWValue < cal->BWBlack)
 	{
-		cal.BWBlack = BWValue;
+		cal->BWBlack = BWValue;
 	}
-	if (CValue > cal.CWhite)
+
+	if (CValue > cal->CWhite)
 	{
-		cal.CWhite = CValue;
+		cal->CWhite = CValue;
 	}
-	else if (CValue < cal.CBlack)
+	else if (CValue < cal->CBlack)
 	{
-		cal.CBlack = CValue;
+		cal->CBlack = CValue;
 	}
 }
-Calibration calibrate()
+Calibration* calibrate()
 {
 	Calibration cal;
 	short BWValue = -1;
@@ -37,27 +39,27 @@ Calibration calibrate()
 	nMotorEncoder[motorB] = 0;
 	nMotorEncoderTarget[motorB] = 180;
 	nSyncedMotors = synchNone;
-	while (nMotorRunState!= runStateIdle)
+	while (nMotorRunState[motorB] != runStateIdle)
 	{
-		findBoundaries(cal);
+		findBoundaries(&cal);
 	}
 	nSyncedMotors = synchCB;
 	nSyncedTurnRatio = -100;
 	nMotorEncoder[motorC] = 0;
 	nMotorEncoderTarget[motorC] = 360;
 	nSyncedMotors = synchNone;
-	while (nMotorRunState!= runStateIdle)
+	while (nMotorRunState[motorC] != runStateIdle)
 	{
-		findBoundaries(cal);
+		findBoundaries(&cal);
 	}
 	nSyncedMotors = synchBC;
 	nSyncedTurnRatio = -100;
 	nMotorEncoder[motorB] = 0;
 	nMotorEncoderTarget[motorB] = 180;
 	nSyncedMotors = synchNone;
-	while (nMotorRunState!= runStateIdle)
+	while (nMotorRunState[motorB] != runStateIdle)
 	{
-		findBoundaries(cal);
+		findBoundaries(&cal);
 	}
-	return cal;
+	return &cal;
 }

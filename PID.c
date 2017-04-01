@@ -16,10 +16,10 @@ short Tp = 25;
 short lastError = 0;
 short integral = 0;
 
-void initPID(Calibration cal)
+void initPID(Calibration* cal)
 {
-	BWOffset = (cal.BWWhite + cal.BWBlack) / 2;
-	COffset = (cal.CWhite + cal.CBlack) / 2;
+	BWOffset = (cal->BWWhite + cal->BWBlack) / 2;
+	COffset = (cal->CWhite + cal->CBlack) / 2;
 }
 
 short errorAmountPID (int inputValue)
