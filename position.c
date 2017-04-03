@@ -4,8 +4,6 @@ typedef struct {
 	short maxX, maxY;
 } Position;
 
-// 375; degrees for 90 degrees robotturn
-
 /**
 * Initialise struct
 */
@@ -25,7 +23,9 @@ bool moveLeft(Position pos, short motorLeft)
 		return false;
 
 	// Do motor stuff
+	nMotorEncoder[motorLeft] = 0;
 	nMotorEncoderTarget[motorLeft] = 375;
+	motor[motorLeft] = CURVE_ROTATION_SPEED;
 
 	// Set new position in struct
 	pos.x--;
@@ -42,7 +42,9 @@ bool moveRight(Position pos, short motorRight)
 		return false;
 
   // Do motor stuff
+	nMotorEncoder[motorRight] = 0;
 	nMotorEncoderTarget[motorRight] = 375;
+	motor[motorRight] = CURVE_ROTATION_SPEED;
 
 	// Set new position in struct
 	pos.x++;
@@ -58,11 +60,11 @@ bool moveUp(Position pos, short motorLeft, short motorRight)
 	if (pos.y == pos.maxY)
 		return false;
 
-  // Start PID task
-
-
 	// Set new position in struct
 	pos.y++;
+
+  // Start PID task
+	startTask(startPID);
 
 	return true;
 }
@@ -73,10 +75,11 @@ bool moveDown(Position pos, short motorLeft, short motorRight)
 	if (pos.y == 0)
 		return false;
 
-	// Start PID task
-
 	// Set new position in struct
 	pos.y--;
+
+	// Start PID task
+	startTask(startPID);
 
 	return true;
 }
