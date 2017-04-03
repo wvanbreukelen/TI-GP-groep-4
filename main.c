@@ -12,6 +12,5 @@
 task main()
 {
 	initPID(calibrate());
-	wait1Msec(1000);
 	startTask(startPID);
 }
