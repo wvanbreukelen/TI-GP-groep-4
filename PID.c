@@ -38,7 +38,7 @@ short errorAmountPID (short sValue)
 
 task startPID()
 {
-	// Give PID system full CPU resources
+	// Give PID task full CPU resources
 	hogCPU();
 
 	int BWValue;
@@ -64,6 +64,9 @@ task startPID()
 	// Stop motors when crossing was detected
 	motor[motorB] = 0;
 	motor[motorC] = 0;
+
+	// Release PID task resources
+	releaseCPU();
 
 	// Stop task itself
 	// @wiebe, @dylan have a look!
