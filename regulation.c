@@ -9,8 +9,8 @@ short Acceleration(short ml, short mr, short speed){
 	while (speed<=25){
 		speed++;
 
-		motor[motorB]=speed;
-		motor[motorC]=speed;
+		motor[ml]=speed;
+		motor[mr]=speed;
 		wait1Msec(50);
 
 	}
@@ -28,8 +28,8 @@ short Deceleration(short ml, short mr, short speed){
 		while(speed>=0){
 			speed--;
 
-			motor[motorB]=speed;
-			motor[motorC]=speed;
+			motor[ml]=speed;
+			motor[mr]=speed;
 			wait1Msec(50);
 		}
 		return speed;
