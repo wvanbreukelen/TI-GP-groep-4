@@ -12,17 +12,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Check to see if a message is available
 
-    /**nSizeOfMessage = cCmdMessageGetSize(INBOX);
-
-    if (nSizeOfMessage > kMaxSizeOfMessage)
-      nSizeOfMessage = kMaxSizeOfMessage;
-    if (nSizeOfMessage > 0){
-      nBTCmdRdErrorStatus = cCmdMessageRead(nRcvBuffer, nSizeOfMessage, INBOX);
-      stringFromChars(s, (char *) nRcvBuffer);
-      long nLastXmitTimeStamp = nPgmTime;
-			long nDeltaTime         = 0;
-
-     **/
 #pragma platform(NXT)
 
 
