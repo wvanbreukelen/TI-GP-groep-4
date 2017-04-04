@@ -24,7 +24,8 @@ bool stopForCrossRoads = true;
 
 /**
  * Initialise PID task
- * @param cal Calibration struct pointer
+ * @param cal Calibration struct pointer, contains calibration values
+ * @param fullPID Boolean to toggle crossroads detection
  */
 void initPID(Calibration* cal, bool fullPID)
 {
@@ -41,8 +42,8 @@ void initPID(Calibration* cal, bool fullPID)
 
 /**
  * Calculate error amount for specified sensor value
- * @param BWValue black and white sensor value
- * @param CValue color sensor value
+ * @param BWError black and white sensor value
+ * @param CError color sensor value
  * @return Error amount as short
  */
 short errorAmountPID (short BWError, short CError)
