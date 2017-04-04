@@ -90,8 +90,4 @@ task startPID()
 	bFloatDuringInactiveMotorPWM = true;
 	motor[motorB] = 0;
 	motor[motorC] = 0;
-
-	// Stop task itself
-	// @wiebe, @dylan have a look!
-	stopTask(startPID);
 }
