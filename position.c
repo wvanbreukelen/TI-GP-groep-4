@@ -5,13 +5,8 @@ typedef struct {
 } Position;
 
 /**
- * Initialise position struct holder
- *
- * @param pos Position struct
- * @param maxX Maximal horizontal value
- * @param maxY Maximal vertical value
- * @param orientation Robot orientation
- */
+* Initialise struct
+*/
 void initPosition(Position pos, short maxX = 4, short maxY = 4, char orientation = 'N')
 {
 	pos.x = 0;
@@ -21,12 +16,6 @@ void initPosition(Position pos, short maxX = 4, short maxY = 4, char orientation
 	pos.maxY = maxY;
 }
 
-/**
- * Move robot to the left
- * @param pos Position struct
- * @param motorLeft Left motor
- * @return Returns false when failed
- */
 bool moveLeft(Position pos, short motorLeft)
 {
 	// Check
@@ -46,12 +35,6 @@ bool moveLeft(Position pos, short motorLeft)
 	return true;
 }
 
-/**
- * Move robot to the right
- * @param pos Position struct
- * @param motorLeft Right motor
- * @return Returns false when failed
- */
 bool moveRight(Position pos, short motorRight)
 {
 	// Check
@@ -71,13 +54,6 @@ bool moveRight(Position pos, short motorRight)
 	return true;
 }
 
-/**
- * Move robot above
- * @param pos Position struct
- * @param motorLeft Left motor
- * @param motorRight Right motor
- * @return Returns false when failed
- */
 bool moveUp(Position pos, short motorLeft, short motorRight)
 {
 	// Check
@@ -93,13 +69,6 @@ bool moveUp(Position pos, short motorLeft, short motorRight)
 	return true;
 }
 
-/**
- * Move robot down
- * @param pos Position struct
- * @param motorLeft Left motor
- * @param motorRight Right motor
- * @return Returns false when failed
- */
 bool moveDown(Position pos, short motorLeft, short motorRight)
 {
 	// Make sure we are not out of matrix
@@ -121,10 +90,6 @@ bool isOutOfMatrix(Position pos)
 	return (pos.x > pos.maxX || pos.y > pos.maxY || pos.x < 0 || pos.y < 0);
 }
 
-/**
- * Display current position on NXT display
- * @param pos Position struct
- */
 void displayPosition(Position pos)
 {
 	clearDisplay();
