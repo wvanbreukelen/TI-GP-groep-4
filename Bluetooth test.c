@@ -1,62 +1,30 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//                                    Bluetooth Sample Program
-//
-// ROBOTC provides easy send and receive of messages over Bluetooth. This sample program illustrate the
-// basic concept. Bluetooth error checking has been removed from the program to make it easier to
-// follow the program logic.
-//
-// There are other sample programs in the ROBOTC distribution that include Bluetooth using error
-// checking.
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Check to see if a message is available
-
-#pragma platform(NXT)
-
-
 const int kMaxSizeOfMessage = 30;
 const int INBOX = 5;
-/**
-	buffer = an ubyte array
-	nMaxBufferSize = maximum size of the message
-
-	return the hexadecimal code of the message
-**/
 
 int readBluetoothData(ubyte* buffer, int nMaxBufferSize)
 {
-	int sizeOfMessage = cCmdMessageGetSize(INBOX);
+  int sizeOfMessage = cCmdMessageGetSize(INBOX);
 
 
-    if (sizeOfMessage > nMaxBufferSize)
-      sizeOfMessage = nMaxBufferSize;
-    if (sizeOfMessage > 0)
-      cCmdMessageRead(buffer, sizeOfMessage, INBOX);
+  if (sizeOfMessage > nMaxBufferSize)
+    sizeOfMessage = nMaxBufferSize;
+  if (sizeOfMessage > 0)
+    cCmdMessageRead(buffer, sizeOfMessage, INBOX);
 
-     return sizeOfMessage;
-
+  return sizeOfMessage;
 }
-/**
-	m = The motor that it needs to turn
 
-	return void
-**/
-void robotTurn(short m,short deg){
-	nMotorEncoder[m]=0;
+void robotTurn(short m, short deg){
+  nMotorEncoder[m]=0;
   nMotorEncoderTarget[m]=deg;
   motor[m]=25;
 
   while(nMotorRunState(m) != runStateIdle){}
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//                                        Receive Messages Task
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Some sample code, remove it later @wiebe
 
-task main()
+/**task main()
 {
   ubyte nRcvBuffer[kMaxSizeOfMessage];
 
@@ -83,4 +51,4 @@ task main()
 		}
 	}
   return;
-}
+}**/
