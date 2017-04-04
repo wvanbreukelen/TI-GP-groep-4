@@ -20,7 +20,7 @@ short derivative = 0;
 short integral = 0;
 short error = -1;
 
-bool stopForCrossRoads;
+bool stopForCrossRoads = true;
 
 /**
  * Initialise PID task
@@ -45,32 +45,30 @@ void initPID(Calibration* cal, bool fullPID)
  * @param CValue color sensor value
  * @return Error amount as short
  */
-short errorAmountPID (short BWValue, short CValue)
+short errorAmountPID (short BWError, short CError)
 {
 	//The following statement keeps our BWValue within the borders BWBlack to BWWhite.
-	BWValue = (BWValue < BWBlack) ?  BWBlack : (BWValue > BWWhite) ? BWWhite : BWValue;
-	CValue = (CValue < CBlack) ?  CBlack : (CValue > CWhite) ? CWhite : CValue;
+	BWError = (BWError < BWBlack) ?  BWBlack : (BWError > BWWhite) ? BWWhite : BWError;
+	CError = (CError < CBlack) ?  CBlack : (CError > CWhite) ? CWhite : CError;
 	//The following two variables will be the maximum output of our delta variable.
 	//Using the following formula, our delta has a range of [-1, 1].
-	float BWDelta = (BWValue - BWOffset) / BWMax;
-	float CDelta = (CValue - COffset) / CMax;
+	float BWDelta = (BWError - BWOffset) / BWMax;
+	float CDelta = (CError - COffset) / CMax;
 	return (CDelta - BWDelta) / 2 * BWMax;
 }
 
 task startPID()
 {
-	// Give PID task full CPU resources
-	hogCPU();
 
-	int BWValue, CValue;
+	short BWValue, CValue;
 	short rightSpeed = 0;
 	short leftSpeed = 0;
 
-	while(1) //If both sensors are black, break.
+	while(1)
 	{
 		BWValue = SensorValue[BWSensor];
-		CValue = SensorValue[CSensor]
-		if (stopForCrossRoads && (BWValue <= BWBlack + 5 && CValue <= CBlack + 5))
+		CValue = SensorValue[CSensor];
+		if (stopForCrossRoads && (BWValue > BWBlack + 5 && CValue > CBlack + 5)) //If both sensors are black, break.
 		{
 			break;
 		}
@@ -89,11 +87,9 @@ task startPID()
 	}
 
 	// Stop motors when crossing was detected
+	bFloatDuringInactiveMotorPWM = true;
 	motor[motorB] = 0;
 	motor[motorC] = 0;
-
-	// Release PID task resources
-	releaseCPU();
 
 	// Stop task itself
 	// @wiebe, @dylan have a look!

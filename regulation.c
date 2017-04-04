@@ -1,24 +1,23 @@
-short acceleration(short ml, short mr, short speed){
-	while (speed<=25){
-		speed++;
+void acceleration(short ml, short mr, short targetSpeed){
+	short currentMotorSpeed = motor[ml];
+	while (currentMotorSpeed < targetSpeed){
+		currentMotorSpeed++;
 
-		motor[motorB]=speed;
-		motor[motorC]=speed;
+		motor[ml] = currentMotorSpeed;
+		motor[mr] = currentMotorSpeed;
 		wait1Msec(50);
-
 	}
-	return speed;
 }
 
-short deceleration(short ml, short mr, short speed){
-		while(speed>=0){
-			speed--;
+void deceleration(short ml, short mr, short targetSpeed){
+	short currentMotorSpeed = motor[ml];
+	while (currentMotorSpeed > targetSpeed){
+			currentMotorSpeed--;
 
-			motor[motorB]=speed;
-			motor[motorC]=speed;
+			motor[ml] = currentMotorSpeed;
+			motor[mr] = currentMotorSpeed;
 			wait1Msec(50);
 		}
-		return speed;
 }
 
 // Example code, remove it later @wiebe
