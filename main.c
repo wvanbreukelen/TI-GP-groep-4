@@ -13,6 +13,6 @@
 
 task main()
 {
-	initPID(calibrate());
+	initPID(calibrate(), true);
 	startTask(startPID);
 }
