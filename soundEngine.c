@@ -1,19 +1,26 @@
-void soundError()
+task soundErrorTask()
 {
 	playSound(soundException);
 
-	while (bSoundActive == 1) {}
+	wait1Msec(500);
+	//while (bSoundActive == 1) {}
 }
 
-void soundCrossing()
+task soundCrossingTask()
 {
 	playSound(soundBeepBeep);
 
-	while (bSoundActive == 1) {}
+	wait1Msec(500);
+
+	//while (bSoundActive == 1) {}
 }
 
-task main()
+task constantPlay()
 {
-	soundCrossing();
-	soundError();
+	while (1)
+	{
+		playSound(soundBeepBeep);
+
+		wait1Msec(500);
+	}
 }
