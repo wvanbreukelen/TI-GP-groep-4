@@ -60,7 +60,7 @@ short errorAmountPID (short BWValue, short CValue)
 task startPID()
 {
 	// Give PID task full CPU resources
-	hogCPU();
+	//hogCPU();
 
 	int BWValue, CValue;
 	short rightSpeed = 0;
@@ -93,9 +93,9 @@ task startPID()
 	motor[motorC] = 0;
 
 	// Release PID task resources
-	releaseCPU();
+	//releaseCPU();
 
 	// Stop task itself
 	// @wiebe, @dylan have a look!
-	stopTask(startPID);
+	//stopTask(startPID);
 }
