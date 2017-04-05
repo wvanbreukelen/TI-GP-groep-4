@@ -1,4 +1,4 @@
-#pragma config(Sensor, S1,     CSensor,  sensorColorNxtRED)
+#pragma config(Sensor, S1,     CSensor,        sensorColorNxtNONE)
 #pragma config(Sensor, S4,     BWSensor,       sensorLightActive)
 #pragma config(Motor,  motorB,          MotorLeft,     tmotorNXT, PIDControl, driveLeft, encoder)
 #pragma config(Motor,  motorC,          MotorRight,    tmotorNXT, PIDControl, driveRight, encoder)
