@@ -1,18 +1,18 @@
 typedef struct {
 	short x, y;
-	char orientation;
+	short orientation; //0 is North, 1 is East, 2 is South, 3 is West.
 	short maxX, maxY;
 } Position;
 
 /**
  * Initialise position struct holder
  *
- * @param pos Position struct
- * @param maxX Maximal horizontal value
- * @param maxY Maximal vertical value
- * @param orientation Robot orientation
+ * @param pos Position struct, contains our current position and orientation.
+ * @param maxX Maximal horizontal value. Increments when going east.
+ * @param maxY Maximal vertical value. Increments when going north.
+ * @param orientation Robot orientation. 0 is North, 1 is East, 2 is South, 3 is West.
  */
-void initPosition(Position pos, short maxX = 4, short maxY = 4, char orientation = 'N')
+void initPosition(Position pos, short maxX = 4, short maxY = 4, char orientation = 0)
 {
 	pos.x = 0;
 	pos.y = 0;
@@ -20,7 +20,51 @@ void initPosition(Position pos, short maxX = 4, short maxY = 4, char orientation
 	pos.maxX = maxX;
 	pos.maxY = maxY;
 }
+/**
+ * Calculate whether or not we can move and adjusts position struct accordingly, AHEAD OF TIME!
+ * @param pos Position struct
+ * @param forward Boolean indicating if we are to move up or down.
+ * @return Returns boolean on whether or not the robot is allowed to move.
+ */
+bool canMove(Position pos, bool forward)
+{
+	short incrementer = -1;
+	if (forward) incrementer = 1;
+	switch (pos.orientation)
+	{
+		case 0: //Moving north, increment y
+			if (pos.maxY <= pos.y + incrementer) //If we are within boundaries,
+			{
+				pos.y++; //edit our position in the struct to represent the next node our robot will drive to.
+				return true;
+			}
+			return false;
+		case 1: //Moving east, increment x
+			if (pos.maxX <= pos.x + incrementer)
+			{
+				pos.x++;
+				return true;
+			}
+			return false;
+		case 2: //Moving south, decrement y
+			if (pos.y - incrementer >= 0)
+			{
+				pos.y--;
+				return true;
+			}
+			return false;
+		case 3: //Moving west, decrement x
+			if (pos.x - incrementer >= 0)
+			{
+				pos.x--;
+				return true;
+			}
+			return false;
 
+		default:
+			return false;
+	}
+}
 /**
  * Move robot to the left
  * @param pos Position struct
@@ -80,12 +124,9 @@ bool moveRight(Position pos, short motorRight)
  */
 bool moveUp(Position pos, short motorLeft, short motorRight)
 {
-	// Check
-	if (pos.y == pos.maxY)
+	// Check whether or not we can move up
+	if (!canMove(pos, true))
 		return false;
-
-	// Set new position in struct
-	pos.y++;
 
   // Start PID task
 	startTask(startPID);
@@ -103,11 +144,8 @@ bool moveUp(Position pos, short motorLeft, short motorRight)
 bool moveDown(Position pos, short motorLeft, short motorRight)
 {
 	// Make sure we are not out of matrix
-	if (pos.y == 0)
+	if (!canMove(pos, false))
 		return false;
-
-	// Set new position in struct
-	pos.y--;
 
 	// Start PID task
 	startTask(startPID);
