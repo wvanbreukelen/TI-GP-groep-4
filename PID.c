@@ -36,7 +36,7 @@ void initPID(Calibration* cal, bool fullPID)
 	BWOffset = (BWWhite + BWBlack) / 2;
 	COffset = (CWhite + CBlack) / 2;
 	BWMax = (BWWhite - BWBlack) / 2.0;
-	CMax = (CWhite - CBlack) / 2.0
+	CMax = (CWhite - CBlack) / 2.0;
 	stopForCrossRoads = fullPID;
 }
 
