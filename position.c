@@ -68,7 +68,7 @@ bool canMove(Position pos, bool forward)
 	}
 }
 /**
- * Move robot to the left
+ * Move robot 90 degrees to the left
  * @param pos Position struct
  */
 void moveLeft(Position pos)
@@ -86,12 +86,10 @@ void moveLeft(Position pos)
 }
 
 /**
- * Move robot to the right
+ * Move robot 90 degrees to the right
  * @param pos Position struct
- * @param motorLeft Right motor
- * @return Returns false when failed
  */
-void moveRight()
+void moveRight(Position pos)
 {
 
   nMotorEncoder[motorB] = 0;
@@ -139,8 +137,8 @@ bool moveDown(Position pos)
 	if (!canMove(pos, false))
 		return false;
 	//Turn 180 degrees
-	moveLeft();
-	moveLeft();
+	moveLeft(pos);
+	moveLeft(pos);
 
 	// Start PID task
 	startTask(startPID);
