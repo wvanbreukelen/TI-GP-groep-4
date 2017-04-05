@@ -1,7 +1,8 @@
-void acceleration(short ml, short mr, short targetSpeed){
+void acceleration(short ml, short mr, short targetSpeed, short alcOffset = 1)
+{
 	short currentMotorSpeed = motor[ml];
 	while (currentMotorSpeed < targetSpeed){
-		currentMotorSpeed++;
+		currentMotorSpeed += alcOffset;
 
 		motor[ml] = currentMotorSpeed;
 		motor[mr] = currentMotorSpeed;
@@ -9,10 +10,11 @@ void acceleration(short ml, short mr, short targetSpeed){
 	}
 }
 
-void deceleration(short ml, short mr, short targetSpeed){
+void deceleration(short ml, short mr, short targetSpeed, short breakOffset = 1)
+{
 	short currentMotorSpeed = motor[ml];
 	while (currentMotorSpeed > targetSpeed){
-			currentMotorSpeed--;
+			currentMotorSpeed -= breakOffset;
 
 			motor[ml] = currentMotorSpeed;
 			motor[mr] = currentMotorSpeed;
