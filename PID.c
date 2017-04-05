@@ -58,9 +58,9 @@ short errorAmountPID (short BWError, short CError)
 	return (CDelta - BWDelta) / 2 * BWMax;
 }
 
-bool onCrossroad()
+bool onCrossRoads(short BW, short C)
 {
-	return (SensorValue[BWSensor] > BWBlack + 5 && SensorValue[CSensor] > CBlack + 5);
+	return (BW < BWBlack + 5 && C < CBlack + 5);
 }
 
 task startPID()
@@ -72,16 +72,18 @@ task startPID()
 
 	while(1)
 	{
+		//We start by reading out sensor values.
 		BWValue = SensorValue[BWSensor];
 		CValue = SensorValue[CSensor];
-		if (stopForCrossRoads && (BWValue > BWBlack + 5 && CValue > CBlack + 5)) //If both sensors are black, break.
+		//If we set the PID system to stop at crossroads, check for crossroads and break on detection.
+		if (stopForCrossRoads && onCrossRoads(BWValue, CValue))
 		{
 			break;
 		}
 		error = errorAmountPID(BWValue, CValue); //First we calculate the position based on our sensors.
-		derivative = error - lastError;
-		short Turn = (Kp * error + Kd * derivative) / 10; //Then we calculate by which amount the two speeds must differ.
-		short rightSpeed = Tp + Turn; //We subtract the turn from the speed of our right wheel, making us turn right. Unless turn is negative, then we turn left.
+		derivative = error - lastError; //Then, we calculate the derivative.
+		short Turn = (Kp * error + Kd * derivative) / 10; //Using those we calculate by which amount the speed of our motors must differ.
+		short rightSpeed = Tp + Turn;
 		short leftSpeed = Tp - Turn;
 		if (rightSpeed > maxSpeed) rightSpeed = maxSpeed; //limiting speed to boundaries.
 		else if (rightSpeed < 0) rightSpeed = 0;
