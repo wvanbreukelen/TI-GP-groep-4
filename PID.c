@@ -58,6 +58,11 @@ short errorAmountPID (short BWError, short CError)
 	return (CDelta - BWDelta) / 2 * BWMax;
 }
 
+bool onCrossroad()
+{
+	return (SensorValue[BWSensor] > BWBlack + 5 && SensorValue[CSensor] > CBlack + 5);
+}
+
 task startPID()
 {
 
