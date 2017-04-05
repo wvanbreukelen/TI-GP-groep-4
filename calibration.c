@@ -10,7 +10,8 @@ void findBoundaries(Calibration* cal)
 {
 	short BWValue = SensorValue[BWSensor];
 	short CValue = SensorValue[CSensor];
-
+	//If our sensor inputs return 0, they are turned off. Skip findBoundaries for now.
+	if (BWValue == 0 || CValue == 0) return;
 	if (BWValue > cal->BWWhite)
 	{
 		cal->BWWhite = BWValue;
@@ -32,34 +33,34 @@ void findBoundaries(Calibration* cal)
 Calibration* calibrate()
 {
 	Calibration cal;
-	short BWValue = -1;
-	short CValue = -1;
-	nSyncedMotors = synchBC;
-	nSyncedTurnRatio = -100;
+
+	cal.BWBlack = 100;
+	cal.CBlack = 100;
+
+	//Turning motor 90 degrees
 	nMotorEncoder[motorB] = 0;
-	nMotorEncoderTarget[motorB] = 180;
-	nSyncedMotors = synchNone;
+	nMotorEncoderTarget[motorB] = 375;
+	motor[motorB] = 20;
+	while (nMotorRunState[motorB] != runStateIdle)
+	{ //While turning, calculate maximum and minimum values
+		findBoundaries(&cal);
+		wait1Msec(10);
+	}
+	//Turning the same motor 90 degrees backwards
+	//bMotorReflected[motorB] = true;
+	nMotorEncoder[motorB] = 0;
+	nMotorEncoderTarget[motorB] = 375;
+	motor[motorB] = -20;
 	while (nMotorRunState[motorB] != runStateIdle)
 	{
 		findBoundaries(&cal);
+		wait1Msec(10);
 	}
-	nSyncedMotors = synchCB;
-	nSyncedTurnRatio = -100;
-	nMotorEncoder[motorC] = 0;
-	nMotorEncoderTarget[motorC] = 360;
-	nSyncedMotors = synchNone;
-	while (nMotorRunState[motorC] != runStateIdle)
-	{
-		findBoundaries(&cal);
-	}
-	nSyncedMotors = synchBC;
-	nSyncedTurnRatio = -100;
-	nMotorEncoder[motorB] = 0;
-	nMotorEncoderTarget[motorB] = 180;
-	nSyncedMotors = synchNone;
-	while (nMotorRunState[motorB] != runStateIdle)
-	{
-		findBoundaries(&cal);
-	}
+
+	bMotorReflected[motorB] = false;
+	//Finally, return our values.
+	clearDisplay();
+	displayString(2, "CSensor: %d-%d", cal.CBlack, cal.CWhite);
+	displayString(3, "BWSensor: %d-%d", cal.BWBlack, cal.BWWhite);
 	return &cal;
 }
