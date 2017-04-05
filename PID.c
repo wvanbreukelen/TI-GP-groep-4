@@ -90,9 +90,4 @@ task startPID()
 		motor[motorC] = leftSpeed;
 		lastError = error;
 	}
-
-	// Stop motors when crossing was detected
-	bFloatDuringInactiveMotorPWM = true;
-	motor[motorB] = 0;
-	motor[motorC] = 0;
 }

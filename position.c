@@ -1,3 +1,5 @@
+#include <regulation.c>
+
 typedef struct {
 	short x, y;
 	short orientation; //0 is North, 1 is East, 2 is South, 3 is West.
@@ -68,26 +70,19 @@ bool canMove(Position pos, bool forward)
 /**
  * Move robot to the left
  * @param pos Position struct
- * @param motorLeft Left motor
- * @return Returns false when failed
  */
-bool moveLeft(Position pos, short motorLeft)
+void moveLeft(Position pos)
 {
-	// Check
-	if (pos.x == 0)
-		return false;
-
 	// Do motor stuff
-	nMotorEncoder[motorLeft] = 0;
-	nMotorEncoderTarget[motorLeft] = 375;
-	motor[motorLeft] = CURVE_ROTATION_SPEED;
-
-	// Set new position in struct
-	pos.x--;
-
-	while (nMotorRunState(motorLeft) != runStateIdle) {}
-
-	return true;
+	nMotorEncoder[motorC] = 0;
+	nSyncedMotors = synchCB;
+	nSyncedTurnRatio = -100;
+	nMotorEncoderTarget[motorC] = 188;
+	motor[motorC] = CURVE_ROTATION_SPEED;
+	while (nMotorRunState(motorC) != runStateIdle) {}
+	nSyncedMotors = synchNone;
+	//Change our orientation. If it's north, change to west. Else decrement orientation.
+	pos.orientation = (pos.orientation == 0) ? 3 : pos.orientation - 1;
 }
 
 /**
@@ -96,33 +91,28 @@ bool moveLeft(Position pos, short motorLeft)
  * @param motorLeft Right motor
  * @return Returns false when failed
  */
-bool moveRight(Position pos, short motorRight)
+void moveRight()
 {
-	// Check
-	if (pos.x == pos.maxX)
-		return false;
 
-  // Do motor stuff
-	nMotorEncoder[motorRight] = 0;
-	nMotorEncoderTarget[motorRight] = 375;
-	motor[motorRight] = CURVE_ROTATION_SPEED;
+  nMotorEncoder[motorB] = 0;
+	nSyncedMotors = synchBC;
+	nSyncedTurnRatio = -100;
+	nMotorEncoderTarget[motorB] = 188;
+	motor[motorB] = CURVE_ROTATION_SPEED;
 
-	// Set new position in struct
-	pos.x++;
-
-	while (nMotorRunState(motorRight) != runStateIdle) {}
-
-	return true;
+	while (nMotorRunState(motorB) != runStateIdle) {}
+	nSyncedMotors = synchNone;
+	pos.orientation = (pos.orientation == 3) ? 0 : pos.orientation + 1;
 }
 
 /**
- * Move robot above
+ * Move robot forwards
  * @param pos Position struct
  * @param motorLeft Left motor
  * @param motorRight Right motor
  * @return Returns false when failed
  */
-bool moveUp(Position pos, short motorLeft, short motorRight)
+bool moveUp(Position pos)
 {
 	// Check whether or not we can move up
 	if (!canMove(pos, true))
@@ -130,7 +120,9 @@ bool moveUp(Position pos, short motorLeft, short motorRight)
 
   // Start PID task
 	startTask(startPID);
-
+	//After crossroads detection, make motor speeds the same and decelerate.
+	motor[motorB] = motor[motorC];
+	deceleration(motorB, motorC, 0);
 	return true;
 }
 
@@ -141,15 +133,20 @@ bool moveUp(Position pos, short motorLeft, short motorRight)
  * @param motorRight Right motor
  * @return Returns false when failed
  */
-bool moveDown(Position pos, short motorLeft, short motorRight)
+bool moveDown(Position pos)
 {
 	// Make sure we are not out of matrix
 	if (!canMove(pos, false))
 		return false;
+	//Turn 180 degrees
+	moveLeft();
+	moveLeft();
 
 	// Start PID task
 	startTask(startPID);
-
+	//After crossroads detection, make motor speeds the same and decelerate.
+	motor[motorB] = motor[motorC];
+	deceleration(motorB, motorC, 0);
 	return true;
 }
 
