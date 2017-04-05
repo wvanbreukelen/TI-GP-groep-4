@@ -11,15 +11,6 @@ short CWhite = 63;
 short COffset = -1;
 float CMax;
 
-short Kp = 10;
-short Kd = 100;
-short Tp = 25;
-
-short lastError = 0;
-short derivative = 0;
-short integral = 0;
-short error = -1;
-
 bool stopForCrossRoads = true;
 
 /**
@@ -65,6 +56,14 @@ bool onCrossRoads(short BW, short C)
 
 task startPID()
 {
+	short Kp = 10;
+	short Kd = 100;
+	short Tp = 25;
+
+	short lastError = 0;
+	short derivative = 0;
+	short integral = 0;
+	short error = -1;
 
 	short BWValue, CValue;
 	short rightSpeed = 0;
@@ -77,9 +76,7 @@ task startPID()
 		CValue = SensorValue[CSensor];
 		//If we set the PID system to stop at crossroads, check for crossroads and break on detection.
 		if (stopForCrossRoads && onCrossRoads(BWValue, CValue))
-		{
 			break;
-		}
 		error = errorAmountPID(BWValue, CValue); //First we calculate the position based on our sensors.
 		derivative = error - lastError; //Then, we calculate the derivative.
 		short Turn = (Kp * error + Kd * derivative) / 10; //Using those we calculate by which amount the speed of our motors must differ.
