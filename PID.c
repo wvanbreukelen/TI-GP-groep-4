@@ -1,5 +1,6 @@
 #define maxSpeed 100
 #include <calibration.c>
+#include <regulation.c>
 
 short BWBlack = 35;
 short BWWhite = 60;
@@ -51,18 +52,17 @@ short errorAmountPID (short BWError, short CError)
 
 bool onCrossRoads(short BW, short C)
 {
-	return (BW < BWBlack + 5 && C < CBlack + 5);
+	return (BW <= BWBlack + BWMax && C <= CBlack + CMax);
 }
 
 task startPID()
 {
-	short Kp = 10;
-	short Kd = 100;
-	short Tp = 25;
+	short Kp = 20;
+	short Kd = 80;
+	short Tp = 30;
 
 	short lastError = 0;
 	short derivative = 0;
-	short integral = 0;
 	short error = -1;
 
 	short BWValue, CValue;
@@ -90,4 +90,6 @@ task startPID()
 		motor[motorC] = leftSpeed;
 		lastError = error;
 	}
+	motor[motorB] = 0;
+	motor[motorC] = 0;
 }

@@ -12,7 +12,7 @@ void acceleration(short ml, short mr, short targetSpeed, short alcOffset = 1)
 
 void deceleration(short ml, short mr, short targetSpeed, short breakOffset = 1)
 {
-	short currentMotorSpeed = motor[ml];
+	short currentMotorSpeed = (motor[ml] > motor[mr]) ? motor[ml] : motor[mr];
 	while (currentMotorSpeed > targetSpeed){
 			currentMotorSpeed -= breakOffset;
 

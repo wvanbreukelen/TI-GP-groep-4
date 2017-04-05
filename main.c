@@ -1,4 +1,4 @@
-#pragma config(Sensor, S1,     CSensor,        sensorLightActive)
+#pragma config(Sensor, S1,     CSensor,        sensorColorNxtRED)
 #pragma config(Sensor, S2,     sonar,          sensorSONAR)
 #pragma config(Sensor, S4,     BWSensor,       sensorLightActive)
 #pragma config(Motor,  motorA,          headMotor,     tmotorNXT, PIDControl, encoder)
@@ -18,9 +18,9 @@
 
 task main()
 {
-	initPID(calibrate(), false);
+	initPID(calibrate(), true);
 
-	startTask(avoidObjectsTask);
+	//startTask(avoidObjectsTask);
 	startTask(startPID);
 
 	wait10Msec(20000);
