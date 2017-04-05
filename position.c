@@ -60,6 +60,9 @@ bool canMove(Position pos, bool forward)
 				return true;
 			}
 			return false;
+
+		default:
+			return false;
 	}
 }
 /**
