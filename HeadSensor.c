@@ -9,23 +9,10 @@ bool isWall(short minDistCm = 25)
 	}
 }
 
-void robotTurn(short m, short deg){
-	nMotorEncoder[m] = 0;
-  nMotorEncoderTarget[m] = deg;
-  int power = 25;
-  if (deg < 0)
-  {
-  	power *= -1;
-  }
-
-  motor[m] = power;
-  while(nMotorRunState(m) != runStateIdle){}
-}
-
 void evade(int whereTo)
 {
 	// Minimal ultrasonic distance for detecting a object
-	int minDistCm = 25;
+	int minDistCm = 30;
 
 	// While status booleans
 	bool sensorPart2 = false;
@@ -101,7 +88,7 @@ task avoidObjectsTask()
 {
 	while (1)
 	{
-		if (isWall(15))
+		if (isWall(20))
 		{
 			// Object is detected, make a sound
 			startTask(soundErrorTask);
@@ -121,11 +108,11 @@ task avoidObjectsTask()
 			deceleration(motorB, motorC, 0);
 
 			// Rotate 90 degrees to get in front of the line
-			nSyncedMotors = synchBC;
-			nSyncedTurnRatio = -100;
-			robotTurn(motorB, 180);
+			//nSyncedMotors = synchBC;
+			//nSyncedTurnRatio = -100;
+			robotTurn(motorB, 370);
 
-			nSyncedMotors = synchNone;
+			//nSyncedMotors = synchNone;
 
 			// Start the PID task again
 			startTask(startPID);
