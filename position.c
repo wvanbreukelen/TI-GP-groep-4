@@ -117,7 +117,7 @@ bool moveUp(Position pos)
 		return false;
 
   // Start PID task
-	startTask(startPID);
+	//startTask(startPID);
 	//After crossroads detection, make motor speeds the same and decelerate.
 	motor[motorB] = motor[motorC];
 	deceleration(motorB, motorC, 0);
@@ -141,7 +141,7 @@ bool moveDown(Position pos)
 	moveLeft(pos);
 
 	// Start PID task
-	startTask(startPID);
+	//startTask(startPID);
 	//After crossroads detection, make motor speeds the same and decelerate.
 	motor[motorB] = motor[motorC];
 	deceleration(motorB, motorC, 0);
@@ -165,4 +165,30 @@ void displayPosition(Position pos)
 	displayString(1, "x: %d", pos.x);
 	displayString(2, "y: %d", pos.y);
 	displayString(3, "Orientation: %c", pos.orientation);
+}
+/**
+ * Turn on right motor until right sensor detects the line
+ */
+void moveLeftPID(short avgValue)
+{
+	//Turn on right motor
+	motor[motorC] = 0;
+	motor[motorB] = 25;
+
+	wait1Msec(200);
+
+	while (sensorValue[CSensor] > avgValue);
+	motor[motorB] = 0;
+}
+
+void moveRightPID(short avgValue)
+{
+	//Turn on right motor
+	motor[motorC] = 25;
+	motor[motorB] = 0;
+
+	wait1Msec(200);
+
+	while (sensorValue[BWSensor] > avgValue);
+	motor[motorC] = 0;
 }

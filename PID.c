@@ -1,6 +1,7 @@
 #define maxSpeed 100
 #include <calibration.c>
 #include <regulation.c>
+#include <position.c>
 
 short BWBlack = 35;
 short BWWhite = 60;
@@ -45,9 +46,7 @@ short errorAmountPID (short BWError, short CError)
 	CError = (CError < CBlack) ?  CBlack : (CError > CWhite) ? CWhite : CError;
 	//The following two variables will be the maximum output of our delta variable.
 	//Using the following formula, our delta has a range of [-1, 1].
-	float BWDelta = (BWError - BWOffset) / BWMax;
-	float CDelta = (CError - COffset) / CMax;
-	return (CDelta - BWDelta) / 2 * BWMax;
+	return ((CError - COffset) / CMax - (BWError - BWOffset) / BWMax) * BWMax / 2;
 }
 
 bool onCrossRoads(short BW, short C)
@@ -90,6 +89,12 @@ task startPID()
 		motor[motorC] = leftSpeed;
 		lastError = error;
 	}
-	motor[motorB] = 0;
 	motor[motorC] = 0;
+	motor[motorB] = 25;
+
+	wait1Msec(200);
+
+	while (sensorValue[CSensor] > COffset);
+	motor[motorB] = 0;
+	startTask(startPID);
 }
