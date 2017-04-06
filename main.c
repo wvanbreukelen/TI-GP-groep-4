@@ -10,18 +10,25 @@
 
 #include <display.c>
 #include <soundEngine.c>
+
 #include <PID.c>
+#include <commands.c>
 #include <position.c>
 #include <calibration.c>
 #include <regulation.c>
+
 #include <HeadSensor.c>
 
 task main()
 {
+	//startTask(handleStopCmd);
 	initPID(calibrate(), true);
 
-	//startTask(avoidObjectsTask);
+	startTask(constantPlay);
+	startTask(avoidObjectsTask);
 	startTask(startPID);
+	startTask(handleCrossroads);
+	startTask(commandHandlerTask);
 
 	wait10Msec(20000);
 }
