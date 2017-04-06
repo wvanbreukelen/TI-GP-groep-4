@@ -1,3 +1,5 @@
+
+
 bool isWall(short minDistCm = 25)
 {
 	if (SensorValue [sonar] > minDistCm)

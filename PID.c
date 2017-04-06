@@ -91,6 +91,33 @@ task startPID()
 	}
 }
 
+/**
+ * Turn on right motor until right sensor detects the line
+ */
+void moveLeftPID()
+{
+	//Turn on right motor
+	motor[motorC] = 0;
+	motor[motorB] = 25;
+
+	wait1Msec(400);
+
+	while (SensorValue[CSensor] > COffset);
+	motor[motorB] = 0;
+}
+
+void moveRightPID()
+{
+	//Turn on right motor
+	motor[motorC] = 25;
+	motor[motorB] = 0;
+
+	wait1Msec(400);
+
+	while (SensorValue[BWSensor] > BWOffset);
+	motor[motorC] = 0;
+}
+
 task handleCrossroads()
 {
 	while (1)
