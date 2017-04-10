@@ -1,5 +1,5 @@
 #define maxSpeed 100
-#define MAX_RANGE 6
+#define MAX_RANGE 5
 #include <calibration.c>
 #include <regulation.c>
 #include <position.c>
@@ -26,7 +26,7 @@ void initPID(Calibration* cal, bool fullPID)
 	BWBlack = cal->BWBlack;
 	BWWhite = cal->BWWhite;
 	CWhite = cal->CWhite;
-	CBlack = cal->CBlack;
+	CBlack = cal->CBlack + 6; //Hard code to fix crossroads detection
 	BWOffset = (BWWhite + BWBlack) / 2;
 	COffset = (CWhite + CBlack) / 2;
 	BWMax = (BWWhite - BWBlack) / 2.0;
@@ -61,12 +61,11 @@ task startPID()
 {
 	short Kp = 400;
 	short Ki = 0;
-	short Kd = 75;
+	short Kd = 100;
 	short Tp = 25;
 
 	short lastError = 0;
 	short derivative = 0;
-	short integral = 0;
 	short error = -1;
 
 
@@ -81,8 +80,7 @@ task startPID()
 
 		error = errorAmountPID(BWValue, CValue); //First we calculate the position based on our sensors.
 		derivative = error - lastError; //Then, we calculate the derivative.
-		integral += error;
-		float Turn = (Kp * error + Ki * integral + Kd * derivative) / 100; //Using those we calculate by which amount the speed of our motors must differ.
+		float Turn = (Kp * error + Kd * derivative) / 100; //Using those we calculate by which amount the speed of our motors must differ.
 		rightSpeed = Tp + Turn;
 		leftSpeed = Tp - Turn;
 		motor[motorB] = rightSpeed;
