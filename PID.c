@@ -1,4 +1,5 @@
 #define maxSpeed 100
+#define MAX_RANGE 6
 #include <calibration.c>
 #include <regulation.c>
 #include <position.c>
@@ -46,7 +47,7 @@ short errorAmountPID (short BWError, short CError)
 	CError = (CError < CBlack) ?  CBlack : (CError > CWhite) ? CWhite : CError;
 	//The following two variables will be the maximum output of our delta variable.
 	//Using the following formula, our delta has a range of [-1, 1].
-	return ((CError - COffset) / CMax - (BWError - BWOffset) / BWMax) * BWMax / 2;
+	return ((CError - COffset) / CMax - (BWError - BWOffset) / BWMax) * MAX_RANGE;
 }
 
 bool onCrossRoads(short BW, short C)
@@ -60,7 +61,7 @@ task startPID()
 {
 	short Kp = 400;
 	short Ki = 0;
-	short Kd = 200;
+	short Kd = 75;
 	short Tp = 25;
 
 	short lastError = 0;
