@@ -27,7 +27,7 @@ task main()
 {
 	//startTask(handleStopCmd);
 	initPID(calibrate(), true);
-	initPosition(pos, 3, 2);
+	initPosition(pos, 4, 4);
 
 	//startTask(constantPlay);
 	if (DETECT_CROSSROADS) startTask(avoidObjectsTask);
