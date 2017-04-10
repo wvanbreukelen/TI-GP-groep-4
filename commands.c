@@ -1,7 +1,7 @@
-
-
 const int kMaxSizeOfMessage = 30;
 const int INBOX = 5;
+
+bool inMatrixMode = false;
 
 int readBluetoothData(ubyte* buffer, int nMaxBufferSize)
 {
@@ -83,12 +83,15 @@ bool handleInput(ubyte* input)
 	switch (*input)
 	{
 		case 0x4C:
-			// Turn left
-			//Change our orientation. If it's north, change to west. Else decrement orientation.
-			pos->orientation = (pos->orientation == 0) ? 3 : pos->orientation - 1;
-			if (!canMove(pos)) {
-				pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
-				return false;
+			if (inMatrixMode)
+			{
+				// Turn left
+				//Change our orientation. If it's north, change to west. Else decrement orientation.
+				pos->orientation = (pos->orientation == 0) ? 3 : pos->orientation - 1;
+				if (!canMove(pos)) {
+					pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
+					return false;
+				}
 			}
 
 			stopAllMotors();
@@ -96,12 +99,15 @@ bool handleInput(ubyte* input)
 
 			break;
 		case 0x52:
-			// Turn right
-			pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
-			if (!canMove(pos))
+			if (inMatrixMode)
 			{
-				pos->orientation = (pos->orientation == 0) ? 3 : pos->orientation - 1;
-				return false;
+				// Turn right
+				pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
+				if (!canMove(pos))
+				{
+					pos->orientation = (pos->orientation == 0) ? 3 : pos->orientation - 1;
+					return false;
+				}
 			}
 
 			stopAllMotors();
@@ -109,8 +115,10 @@ bool handleInput(ubyte* input)
 
 			break;
 		case 0x55:
-			if (!canMove(pos)) return false;
-
+			if (inMatrixMode)
+			{
+					if (!canMove(pos)) return false;
+			}
 			// Go forward
 			motor[motorB] = 25;
 			motor[motorC] = 25;
@@ -129,12 +137,42 @@ bool handleInput(ubyte* input)
 			stopAllMotors();
 			robotTurnAround();
 
-			pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
-			pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
+			if (inMatrixMode)
+			{
+				pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
+				pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
 
-			if (!canMove(pos)) return false;
+				if (!canMove(pos)) return false;
+			}
 
 			break;
+		case 0x41:
+			// Reset
+			stopAllMotors();
+			stopTask(startPID);
+			stopTask(avoidObjectsTask);
+			stopTask(handleCrossroads);
+
+			initPID(calibrate(), true);
+
+			initPosition(pos, MATRIX_SIZE_X, MATRIX_SIZE_Y);
+
+			if (DETECT_CROSSROADS) startTask(avoidObjectsTask);
+			startTask(startPID);
+			if (AVOID_OBJECTS) startTask(handleCrossroads);
+
+			break;
+
+		case 0x42:
+			// Matrix modus
+			inMatrixMode = true;
+			break;
+
+		case 0x43:
+			// Basic/line following modus
+			inMatrixMode = false;
+			break;
+
 		default:
 			return false;
 	}
