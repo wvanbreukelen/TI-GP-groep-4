@@ -100,7 +100,7 @@ void moveLeftPID()
 
 	wait1Msec(500);
 
-	while (SensorValue[CSensor] > COffset);
+	while (SensorValue[CSensor] > COffset) {}
 	motor[motorB] = 0;
 }
 
@@ -112,7 +112,7 @@ void moveRightPID()
 
 	wait1Msec(500);
 
-	while (SensorValue[BWSensor] > BWOffset);
+	while (SensorValue[BWSensor] > BWOffset) {}
 	motor[motorC] = 0;
 }
 
