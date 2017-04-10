@@ -39,14 +39,14 @@ void initPID(Calibration* cal, bool fullPID)
  * @param CError color sensor value
  * @return Error amount as short
  */
-short errorAmountPID (short BWError, short CError)
+float errorAmountPID (short BWError, short CError)
 {
 	//The following statement keeps our BWValue within the borders BWBlack to BWWhite.
 	BWError = (BWError < BWBlack) ?  BWBlack : (BWError > BWWhite) ? BWWhite : BWError;
 	CError = (CError < CBlack) ?  CBlack : (CError > CWhite) ? CWhite : CError;
 	//The following two variables will be the maximum output of our delta variable.
 	//Using the following formula, our delta has a range of [-1, 1].
-	return ((CError - COffset) / CMax - (BWError - BWOffset) / BWMax) * BWMax / 2;
+	return (float) ((CError - COffset) / CMax - (BWError - BWOffset) / BWMax);
 }
 
 bool onCrossRoads(short BW, short C)
@@ -58,17 +58,19 @@ short BWValue, CValue;
 
 task startPID()
 {
-	short Kp = 20;
-	short Kd = 80;
+	short Kp = 1;
+	short Ki = 0;
+	short Kd = 0;
 	short Tp = 30;
 
 	short lastError = 0;
 	short derivative = 0;
+	short integral = 0;
 	short error = -1;
 
 
-	short rightSpeed = 0;
-	short leftSpeed = 0;
+	float rightSpeed = 0;
+	float leftSpeed = 0;
 
 	while(1)
 	{
@@ -78,13 +80,16 @@ task startPID()
 
 		error = errorAmountPID(BWValue, CValue); //First we calculate the position based on our sensors.
 		derivative = error - lastError; //Then, we calculate the derivative.
-		short Turn = (Kp * error + Kd * derivative) / 10; //Using those we calculate by which amount the speed of our motors must differ.
-		short rightSpeed = Tp + Turn;
-		short leftSpeed = Tp - Turn;
-		if (rightSpeed > maxSpeed) rightSpeed = maxSpeed; //limiting speed to boundaries.
-		else if (rightSpeed < 0) rightSpeed = 0;
-		if (leftSpeed > maxSpeed) leftSpeed = maxSpeed;
-		else if (leftSpeed < 0) leftSpeed = 0;
+		float Turn = (Kp * error + Ki * integral + Kd * derivative); //Using those we calculate by which amount the speed of our motors must differ.
+		if (Turn > 0)
+		{
+			rightSpeed = Tp;
+			leftSpeed = Tp - Turn;
+		} else
+		{
+			rightSpeed = Tp + Turn;
+			leftSpeed = Tp;
+		}
 		motor[motorB] = rightSpeed;
 		motor[motorC] = leftSpeed;
 		lastError = error;
