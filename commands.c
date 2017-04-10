@@ -1,3 +1,5 @@
+
+
 const int kMaxSizeOfMessage = 30;
 const int INBOX = 5;
 
@@ -13,18 +15,7 @@ int readBluetoothData(ubyte* buffer, int nMaxBufferSize)
   return sizeOfMessage;
 }
 
-void robotTurn(short m, short deg){
-	nMotorEncoder[m] = 0;
-  nMotorEncoderTarget[m] = deg;
-  int power = 25;
-  if (deg < 0)
-  {
-  	power *= -1;
-  }
 
-  motor[m] = power;
-  while(nMotorRunState(m) != runStateIdle){}
-}
 
 /**void robotTurn(short deg, bool inverted = false){
   nSyncedMotors = (inverted) ? synchBC : synchCB;
@@ -50,12 +41,14 @@ void robotTurn(short m, short deg){
 
 void robotTurnLeft()
 {
-	robotTurn(motorB, 370);
+	//robotTurn(motorB, 370);
+	moveLeftPID();
 }
 
 void robotTurnRight()
 {
-	robotTurn(motorC, 370);
+	//robotTurn(motorC, 370);
+	moveRightPID();
 }
 
 void robotTurnAround()
@@ -85,24 +78,39 @@ bool handleInput(ubyte* input)
 {
 	startTask(soundCrossingTask);
 
-	clearDisplay();
-	displayTextLine(4, "%#X", *input);
+	//if (SensorValue [sonar] < 25) return false;
 
 	switch (*input)
 	{
 		case 0x4C:
 			// Turn left
+			//Change our orientation. If it's north, change to west. Else decrement orientation.
+			pos->orientation = (pos->orientation == 0) ? 3 : pos->orientation - 1;
+			if (!canMove(pos)) {
+				pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
+				return false;
+			}
+
 			stopAllMotors();
 			robotTurnLeft();
 
 			break;
 		case 0x52:
 			// Turn right
+			pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
+			if (!canMove(pos))
+			{
+				pos->orientation = (pos->orientation == 0) ? 3 : pos->orientation - 1;
+				return false;
+			}
+
 			stopAllMotors();
 			robotTurnRight();
 
 			break;
 		case 0x55:
+			if (!canMove(pos)) return false;
+
 			// Go forward
 			motor[motorB] = 25;
 			motor[motorC] = 25;
@@ -120,10 +128,18 @@ bool handleInput(ubyte* input)
 			// Turn around
 			stopAllMotors();
 			robotTurnAround();
+
+			pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
+			pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
+
+			if (!canMove(pos)) return false;
+
 			break;
 		default:
 			return false;
 	}
+
+	displayPosition(pos);
 
 	return true;
 }
@@ -140,11 +156,14 @@ task commandHandlerTask()
 		{
 			stopTask(handleCrossroads);
 			stopTask(startPID);
+			stopTask(avoidObjectsTask);
 
-			if (!handleInput(nRcvBuffer)) startTask(soundErrorTask);
-
-			startTask(startPID);
-			startTask(handleCrossroads);
+			if (handleInput(nRcvBuffer))
+			{
+				startTask(startPID);
+				startTask(handleCrossroads);
+				if (DETECT_CROSSROADS) startTask(avoidObjectsTask);
+			}
 		}
 
 		wait1Msec(200);
