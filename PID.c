@@ -23,7 +23,7 @@ void initPID(Calibration* cal, bool fullPID = true)
 	BWBlack = cal->BWBlack;
 	BWWhite = cal->BWWhite;
 	CWhite = cal->CWhite;
-	CBlack = cal->CBlack + 6; //Hard code to fix crossroads detection
+	CBlack = cal->CBlack; //Hard code to fix crossroads detection
 	//Calculate offset (average) and max value (difference between calibration values, halfed)
 	BWOffset = (BWWhite + BWBlack) / 2;
 	COffset = (CWhite + CBlack) / 2;
@@ -55,7 +55,7 @@ short errorAmountPID (short BWError, short CError)
  */
 bool onCrossRoads(short BW, short C)
 {
-	return (BW <= BWBlack + BWMax && C <= CBlack + CMax);
+	return (BW <= BWOffset && C <= COffset);
 }
 
 short BWValue, CValue;
@@ -68,7 +68,8 @@ task startPID()
 	//We start off by initialising some constants.
 	const short Kp = 400;
 	const short Kd = 100;
-	const short Tp = (inMatrixMode) ? 15 : 25;
+	//Our base speed on a straight line. This is lower for matrix mode.
+	const short Tp = (inMatrixMode) ? 15 : BASE_SPEED;
 	//Initialising variables used every loop
 	short lastError = 0;
 	short derivative = 0;
