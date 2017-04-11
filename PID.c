@@ -1,6 +1,5 @@
-#define maxSpeed 100
 #define MAX_RANGE 6
-
+//Initialising
 short BWBlack = 35;
 short BWWhite = 60;
 short BWOffset = -1;
@@ -14,16 +13,18 @@ float CMax;
 bool stopForCrossRoads = true;
 
 /**
- * Initialise PID task
+ * Initialise PID task by entering our standard/calibration values and calculating offset & max delta.
  * @param cal Calibration struct pointer, contains calibration values
  * @param fullPID Boolean to toggle crossroads detection
  */
-void initPID(Calibration* cal, bool fullPID)
+void initPID(Calibration* cal, bool fullPID = true)
 {
+	//Set globals in this file to calibration values
 	BWBlack = cal->BWBlack;
 	BWWhite = cal->BWWhite;
 	CWhite = cal->CWhite;
 	CBlack = cal->CBlack + 6; //Hard code to fix crossroads detection
+	//Calculate offset (average) and max value (difference between calibration values, halfed)
 	BWOffset = (BWWhite + BWBlack) / 2;
 	COffset = (CWhite + CBlack) / 2;
 	BWMax = (BWWhite - BWBlack) / 2.0;
@@ -32,9 +33,9 @@ void initPID(Calibration* cal, bool fullPID)
 }
 
 /**
- * Calculate error amount for specified sensor value
- * @param BWError black and white sensor value
- * @param CError color sensor value
+ * Calculate the difference between the two sensors and return this 'error' value.
+ * @param BWError Value of our black and white sensor
+ * @param CError Value of our color sensor
  * @return Error amount as short
  */
 short errorAmountPID (short BWError, short CError)
@@ -43,31 +44,38 @@ short errorAmountPID (short BWError, short CError)
 	BWError = (BWError < BWBlack) ?  BWBlack : (BWError > BWWhite) ? BWWhite : BWError;
 	CError = (CError < CBlack) ?  CBlack : (CError > CWhite) ? CWhite : CError;
 	//The following two variables will be the maximum output of our delta variable.
-	//Using the following formula, our delta has a range of [-1, 1].
+	//Using the following formula, our delta has a range of [-1, 1]. Multiply by MAX_RANGE to increase its range.
 	return ((CError - COffset) / CMax - (BWError - BWOffset) / BWMax) * MAX_RANGE;
 }
-
+/**
+ * Conclude whether or not our robot is at a crossroads. If both sensor values are below average, return true.
+ * @param BW Value of our black and white sensor
+ * @param C Value of our color sensor
+ * @return Boolean stating whether or not the robot is on a crossroads.
+ */
 bool onCrossRoads(short BW, short C)
 {
 	return (BW <= BWBlack + BWMax && C <= CBlack + CMax);
 }
 
 short BWValue, CValue;
-
+/**
+ * Our actual PD-task. This contains the main loop for keeping track where we are on the line.
+ * We use some constants and our sensor values to calculate what the speed of our motors will have to be.
+ */
 task startPID()
 {
-	short Kp = 400;
-	short Kd = 100;
-	short Tp = (inMatrixMode) ? 15 : 25;
-
+	//We start off by initialising some constants.
+	const short Kp = 400;
+	const short Kd = 100;
+	const short Tp = (inMatrixMode) ? 15 : 25;
+	//Initialising variables used every loop
 	short lastError = 0;
 	short derivative = 0;
 	short error = -1;
-
-
 	short rightSpeed = 0;
 	short leftSpeed = 0;
-
+	//Start loop (unbreakable, startPID is a task so it can be stopped from the outside).
 	while(1)
 	{
 		//We start by reading out sensor values.
