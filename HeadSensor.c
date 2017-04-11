@@ -1,5 +1,8 @@
-
-
+/**
+ * Check if a wall is detected
+ * @param minDistCm Minimal distance to trigger wall
+ * @return Result
+ */
 bool isWall(short minDistCm = 25)
 {
 	if (SensorValue [sonar] > minDistCm)
@@ -11,6 +14,10 @@ bool isWall(short minDistCm = 25)
 	}
 }
 
+/**
+ * Evade an object
+ * @param whereTo Amount of degress needed to turn the ultrasonic sensor
+ */
 void evade(int whereTo)
 {
 	// Minimal ultrasonic distance for detecting a object
@@ -71,6 +78,10 @@ void evade(int whereTo)
 	}
 }
 
+/**
+ * Avoid a object
+ * @param whereTo Amount of degress needed to turn the ultrasonic sensor
+ */
 void avoid(int whereTo)
 {
 	// Turn robot 90 degrees counterclockwise
@@ -86,6 +97,9 @@ void avoid(int whereTo)
 	evade(whereTo);
 }
 
+/**
+ * This task avoids objects
+ */
 task avoidObjectsTask()
 {
 	while (1)
@@ -121,14 +135,3 @@ task avoidObjectsTask()
 		}
 	}
 }
-
-
-
-/**task main(){
-  int way = -90;
-  while(1){
-  	Acceleration(motorB, motorC, 0);
-  	while (!isWall()){}
-  	avoid(way, 10);
-	}
-}**/
