@@ -1,5 +1,5 @@
 #define maxSpeed 100
-#define MAX_RANGE 5
+#define MAX_RANGE 6
 #include <calibration.c>
 #include <regulation.c>
 #include <position.c>
@@ -62,7 +62,7 @@ task startPID()
 	short Kp = 400;
 	short Ki = 0;
 	short Kd = 100;
-	short Tp = 25;
+	short Tp = (inMatrixMode) ? 15 : 25;
 
 	short lastError = 0;
 	short derivative = 0;
