@@ -9,8 +9,10 @@
 #define CURVE_ROTATION_SPEED 25
 #define DETECT_CROSSROADS 1
 #define AVOID_OBJECTS 1
-#define MATRIX_SIZE_X 3
-#define MATRIX_SIZE_Y 2
+#define MATRIX_SIZE_X 4
+#define MATRIX_SIZE_Y 4
+
+bool inMatrixMode = false;
 
 #include <display.c>
 #include <soundEngine.c>
