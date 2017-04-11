@@ -141,12 +141,6 @@ void robotTurn(short m, short deg){
   while(nMotorRunState(m) != runStateIdle){}
 }
 
-// @tony @nino @dylan Is this really needed
-bool isOutOfMatrix(Position* pos)
-{
-	return (pos->x > pos->maxX || pos->y > pos->maxY || pos->x < 0 || pos->y < 0);
-}
-
 /**
  * Display current position on NXT display
  * @param pos Position struct
