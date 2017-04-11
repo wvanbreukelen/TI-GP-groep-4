@@ -1,5 +1,3 @@
-#include <regulation.c>
-
 typedef struct {
 	short x, y;
 	short orientation; //0 is North, 1 is East, 2 is South, 3 is West.
@@ -70,62 +68,6 @@ bool canMove(Position* pos)
 		default:
 			return false;
 	}
-}
-/**
- * Move robot 90 degrees to the left
- * @param pos Position struct
- */
-void moveLeft(Position* pos)
-{
-	// Do motor stuff
-	nMotorEncoder[motorC] = 0;
-	nSyncedMotors = synchCB;
-	nSyncedTurnRatio = -100;
-	nMotorEncoderTarget[motorC] = 188;
-	motor[motorC] = CURVE_ROTATION_SPEED;
-	while (nMotorRunState(motorC) != runStateIdle) {}
-	nSyncedMotors = synchNone;
-	//Change our orientation. If it's north, change to west. Else decrement orientation.
-	pos->orientation = (pos->orientation == 0) ? 3 : pos->orientation - 1;
-}
-
-/**
- * Move robot 90 degrees to the right
- * @param pos Position struct
- */
-void moveRight(Position* pos)
-{
-
-  nMotorEncoder[motorB] = 0;
-	nSyncedMotors = synchBC;
-	nSyncedTurnRatio = -100;
-	nMotorEncoderTarget[motorB] = 188;
-	motor[motorB] = CURVE_ROTATION_SPEED;
-
-	while (nMotorRunState(motorB) != runStateIdle) {}
-	nSyncedMotors = synchNone;
-	pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
-}
-
-/**
- * Move robot forwards
- * @param pos Position struct
- * @param motorLeft Left motor
- * @param motorRight Right motor
- * @return Returns false when failed
- */
-bool moveUp(Position* pos)
-{
-	// Check whether or not we can move up
-	if (!canMove(pos))
-		return false;
-
-  // Start PID task
-	//startTask(startPID);
-	//After crossroads detection, make motor speeds the same and decelerate.
-	motor[motorB] = motor[motorC];
-	deceleration(motorB, motorC, 0);
-	return true;
 }
 
 void robotTurn(short m, short deg){

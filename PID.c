@@ -1,8 +1,5 @@
 #define maxSpeed 100
 #define MAX_RANGE 6
-#include <calibration.c>
-#include <regulation.c>
-#include <position.c>
 
 short BWBlack = 35;
 short BWWhite = 60;
@@ -60,7 +57,6 @@ short BWValue, CValue;
 task startPID()
 {
 	short Kp = 400;
-	short Ki = 0;
 	short Kd = 100;
 	short Tp = (inMatrixMode) ? 15 : 25;
 

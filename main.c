@@ -16,14 +16,14 @@ bool inMatrixMode = false;
 
 #include <display.c>
 #include <soundEngine.c>
+#include <calibration.c>
+#include <regulation.c>
 
 #include <PID.c>
 #include <position.c>
 
 Position* pos;
 
-#include <calibration.c>
-#include <regulation.c>
 #include <HeadSensor.c>
 #include <commands.c>
 
