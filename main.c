@@ -9,6 +9,7 @@
 #define CURVE_ROTATION_SPEED 25
 #define DETECT_CROSSROADS 1
 #define AVOID_OBJECTS 1
+#define PLAY_ENV_SOUNDS 0
 #define MATRIX_SIZE_X 4
 #define MATRIX_SIZE_Y 4
 
@@ -18,7 +19,6 @@ bool inMatrixMode = false;
 #include <soundEngine.c>
 #include <calibration.c>
 #include <regulation.c>
-
 #include <PID.c>
 #include <position.c>
 
@@ -29,20 +29,24 @@ Position* pos;
 
 void startTasks()
 {
-		//startTask(constantPlay);
 	if (DETECT_CROSSROADS) startTask(avoidObjectsTask);
 	startTask(startPID);
 	if (AVOID_OBJECTS) startTask(handleCrossroads);
 	startTask(commandHandlerTask);
+	// Play sound continuesly with a low CPU priority
+	if (PLAY_ENV_SOUNDS) startTask(constantPlay, 10);
 }
 
 task main()
 {
-	//startTask(handleStopCmd);
 	initPID(calibrate(), true);
 	initPosition(pos, MATRIX_SIZE_X, MATRIX_SIZE_Y);
 
 	startTasks();
 
-	wait10Msec(20000);
+	// Wait forever
+	while (1)
+	{
+		wait1Msec(300);
+	}
 }

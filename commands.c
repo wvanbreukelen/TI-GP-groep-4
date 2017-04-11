@@ -70,7 +70,7 @@ bool handleInput(ubyte* input)
 
             if (inMatrixMode)
             {
-                //Change our orientation. If it's north, change to west. Else decrement orientation.
+                // Change our orientation. If it's north, change to west. Else decrement orientation.
                 pos->orientation = (pos->orientation == 0) ? 3 : pos->orientation - 1;
 
                 // Check if the robot has the right to move in the desired direction
@@ -104,7 +104,7 @@ bool handleInput(ubyte* input)
 
             break;
         case 0x55:
-      // Move up
+            // Move up
 
             if (inMatrixMode)
             {
@@ -115,7 +115,7 @@ bool handleInput(ubyte* input)
             motor[motorB] = 25;
             motor[motorC] = 25;
 
-      // Wait until the robot has passed the crossroad
+             // Wait until the robot has passed the crossroad
             while (onCrossRoads(SensorValue[BWSensor], SensorValue[CSensor])) {}
 
             break;
