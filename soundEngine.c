@@ -88,19 +88,33 @@
 #define NOTE_D8  4699
 #define NOTE_DS8 4978
 
-// Rick ashley - never gonna give you up melody
-const short melody0[] = {NOTE_C4, NOTE_D4, NOTE_F4, NOTE_D4, NOTE_A4, 0, NOTE_A4, NOTE_G4, 0, NOTE_C4, NOTE_D4, NOTE_F4, NOTE_D4, NOTE_G4, 0,
-								 			 NOTE_G4, NOTE_F4, 0};
 //Star Wars Imperial March melody
-const short melody1[] = {NOTE_A4, NOTE_A4, NOTE_A4, NOTE_F4, NOTE_C5, NOTE_A4, NOTE_F4, NOTE_C5, NOTE_A4, 0, NOTE_E5, NOTE_E5, NOTE_E5, NOTE_F5,
+const short melody0[] = {NOTE_A4, NOTE_A4, NOTE_A4, NOTE_F4, NOTE_C5, NOTE_A4, NOTE_F4, NOTE_C5, NOTE_A4, 0, NOTE_E5, NOTE_E5, NOTE_E5, NOTE_F5,
 								 			 NOTE_CS5,NOTE_GS4, NOTE_F4, NOTE_C5, NOTE_A4, 0};
+
+// Rick ashley - never gonna give you up melody
+const short melody1[] = {NOTE_C4, NOTE_D4, NOTE_F4, NOTE_D4, NOTE_A4, 0, NOTE_A4, NOTE_G4, 0, NOTE_C4, NOTE_D4, NOTE_F4, NOTE_D4, NOTE_G4, 0,
+								 			 NOTE_G4, NOTE_F4, 0};
+// Darude - Sandstorm melody
+const short melody2[] = {NOTE_A3, NOTE_B3, NOTE_B3, NOTE_B3, NOTE_B3, 0,			 0,				0,			 0,				0,
+												 NOTE_D4, NOTE_E4, NOTE_E4, NOTE_E4, NOTE_E4, 0,			 0,				0,			 0,				0,
+												 NOTE_B3, NOTE_B3, NOTE_B3, NOTE_B3, NOTE_B3, NOTE_B3, NOTE_B3, NOTE_B3, NOTE_B3, NOTE_B3,
+												 NOTE_E4, NOTE_E4, NOTE_E4, NOTE_E4, NOTE_E4, NOTE_E4, NOTE_E4, NOTE_E4, NOTE_E4, NOTE_E4,
+												 NOTE_D4, NOTE_D4, NOTE_D4, NOTE_D4, NOTE_D4, NOTE_D4, NOTE_D4, NOTE_D4, NOTE_D4, NOTE_D4,
+												 NOTE_A3, NOTE_B3, NOTE_B3, NOTE_B3, NOTE_B3, NOTE_B3};
+
+// Star Wars Imperial March tempo
+const short tempo0[] =  {50, 50, 50, 35, 15, 50, 35, 15, 65, 50, 50, 50, 50, 35, 15, 50, 35, 15, 65, 100};
+
 // Rick ashley - never gonna give you up tempo
-const short tempo0[] =  {12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12};
-//Star Wars Imperial March tempo
-const short tempo1[] =  {50, 50, 50, 35, 15, 50, 35, 15, 65, 50, 50, 50, 50, 35, 15, 50, 35, 15, 65, 100};
+const short tempo1[] =  {12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12};
+
+// Darude - Sandstorm tempo
+const short tempo2[] =  {7, 7, 7, 7, 7, 9, 9, 9, 9, 9,   7, 7, 7, 7, 7, 9, 9, 9, 9, 9,   9, 9, 9, 9, 9, 9, 9, 9, 9, 9,
+												 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,   9, 9, 9, 9, 9, 9};
 
 /**
-* Plays standard the Imperial March, except when told to play never gonna give you up.
+* Infinitely plays the Imperial March looped, except when told to play one of the other songs.
 *
 * @param song Song to play
 **/
@@ -109,23 +123,34 @@ void playSong(short song = 0)
 	short lengthTone;
 	short size = 0;
 	short theNote;
-
-	if (song == 0)
+	short *tempo;
+	short *melody;
+	if(song == 0)
 	{
 		size = sizeof(tempo1)/sizeof(tempo1[0]);
-	} else {
-		size = sizeof(tempo0)/sizeof(tempo0[0]);
+		tempo = &tempo0;
+		melody = &melody0;
 	}
-
-	for (short curTone = 0; curTone < size; ++curTone)
+	if(song == 1)
 	{
-		lengthTone = (song == 0) ? tempo1[curTone] : tempo0[curTone];
-		theNote = (song == 0) ? melody1[curTone] : melody0[curTone];
+		size = sizeof(tempo0)/sizeof(tempo0[0]);
+		tempo = &tempo1;
+		melody = &melody1;
+	}
+	if(song == 2)
+	{
+		size = sizeof(tempo2)/sizeof(tempo2[0]);
+		tempo = &tempo2;
+		melody = &melody2;
+	}
+	for(short curTone = 0; curTone < size; curTone++)
+	{
+		lengthTone =  tempo[curTone];
+		theNote = melody[curTone];
 		playTone(theNote, lengthTone);
 		while(bSoundActive){}
 	}
 }
-
 task constantPlay()
 {
 	while (1)
@@ -135,6 +160,9 @@ task constantPlay()
 
 		wait1Msec(500);
 		playSong(1);
+
+		wait1Msec(500);
+		playSong(2);
 	}
 }
 
