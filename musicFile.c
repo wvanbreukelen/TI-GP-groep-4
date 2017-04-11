@@ -114,8 +114,6 @@ void playSongLoop(short song = 0)
 		size = sizeof(tempo0)/sizeof(tempo0[0]);
 	}
 
-	displayString(2, "%d", size);
-
 	while(1)
 	{
 		for(short curTone = 0; curTone < size; curTone++)
