@@ -1,3 +1,5 @@
+#include <display.h>
+
 /**
  * Clear the entire NXT display
  */

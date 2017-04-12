@@ -1,10 +1,12 @@
 #define MAX_RANGE 6
-//Initialising
+
+//Initialise global variables
 short BWBlack = 35;
 short BWWhite = 60;
 short BWOffset = -1;
 float BWMax;
 
+// Default calibration values
 short CBlack = 22;
 short CWhite = 63;
 short COffset = -1;
@@ -23,7 +25,7 @@ void initPID(Calibration* cal, bool fullPID = true)
 	BWBlack = cal->BWBlack;
 	BWWhite = cal->BWWhite;
 	CWhite = cal->CWhite;
-	CBlack = cal->CBlack + 6; //Hard code to fix crossroads detection
+	CBlack = cal->CBlack + 6; // Hard code to fix crossroads detection
 	//Calculate offset (average) and max value (difference between calibration values, halfed)
 	BWOffset = (BWWhite + BWBlack) / 2;
 	COffset = (CWhite + CBlack) / 2;
@@ -68,6 +70,7 @@ task startPID()
 	//We start off by initialising some constants.
 	const short Kp = 400;
 	const short Kd = 100;
+	// If we are in matrix mode, decrease the motor power to improve crossroad detection
 	const short Tp = (inMatrixMode) ? 15 : 25;
 	//Initialising variables used every loop
 	short lastError = 0;
@@ -75,7 +78,8 @@ task startPID()
 	short error = -1;
 	short rightSpeed = 0;
 	short leftSpeed = 0;
-	//Start loop (unbreakable, startPID is a task so it can be stopped from the outside).
+
+	// Start loop (unbreakable, startPID is a task so it can be stopped from the outside).
 	while(1)
 	{
 		//We start by reading out sensor values.
@@ -120,6 +124,9 @@ void moveRightPID()
 	motor[motorC] = 0;
 }
 
+/**
+ * Detects and handlers crossroads
+ */
 task handleCrossroads()
 {
 	while (1)
@@ -128,6 +135,8 @@ task handleCrossroads()
 		if (stopForCrossRoads && onCrossRoads(BWValue, CValue))
 		{
 			stopTask(startPID);
+
+            // Stop drive motors
 			motor[motorB] = 0;
 			motor[motorC] = 0;
 		}

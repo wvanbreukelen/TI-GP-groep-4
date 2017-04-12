@@ -1,16 +1,6 @@
 #include <commands.h>
 
 /**
- * Maximum size of single bluetooth message
- */
-const int kMaxSizeOfMessage = 30;
-
-/**
- * Maximum size of message inbox
- */
-const int inboxSize = 5;
-
-/**
  * Read bluetooth message buffer
  * @param buffer Buffer array pointer
  * @param nMaxBufferSize Maximum size of message

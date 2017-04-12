@@ -1,8 +1,4 @@
-typedef struct {
-	short x, y;
-	short orientation; //0 is North, 1 is East, 2 is South, 3 is West.
-	short maxX, maxY;
-} Position;
+#include <position.h>
 
 /**
  * Initialise position struct holder
@@ -70,17 +66,19 @@ bool canMove(Position* pos)
 	}
 }
 
-void robotTurn(short m, short deg){
-	nMotorEncoder[m] = 0;
-  nMotorEncoderTarget[m] = deg;
-  int power = 25;
-  if (deg < 0)
-  {
-  	power *= -1;
-  }
+void robotTurn(short m, short deg)
+{
+    nMotorEncoder[m] = 0;
+    nMotorEncoderTarget[m] = deg;
+    int power = 25;
 
-  motor[m] = power;
-  while(nMotorRunState(m) != runStateIdle){}
+    if (deg < 0)
+    {
+        power *= -1;
+    }
+
+    motor[m] = power;
+    while(nMotorRunState(m) != runStateIdle){}
 }
 
 /**
