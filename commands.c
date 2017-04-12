@@ -236,8 +236,13 @@ task handleCrossroads()
 			} else {
 				ubyte data = dequeue(&q);
 
-				handleInput(data);
-				startTask(startPID);
+				if (handleInput(data))
+				{
+					startTask(startPID);
+				} else {
+					startTask(soundErrorTask);
+				}
+
 			}
 
 
