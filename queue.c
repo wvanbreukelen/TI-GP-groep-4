@@ -1,12 +1,11 @@
 /**
- * @file
- * @name Practicum 5_3
- * @author 1696056, Wiebe van Breukelen
- * @brief Huib Aldewereld
- */
+* @file queue.c
+* @author Wiebe van Breukelen
+* @date 12-04-2017
+* @brief Queue used for Bluetooth command input buffering
+*/
 
 #include <queue.h>
-
 
 /**
  * Init a queue
@@ -14,9 +13,11 @@
  */
 void init_queue(Queue* pq)
 {
-    pq->head = 0;
-    pq->tail = 0;
-    pq->count = 0;
+  pq->head = 0;
+  pq->tail = 0;
+
+  // Amount of items in queue
+  pq->count = 0;
 }
 
 /**
@@ -26,15 +27,9 @@ void init_queue(Queue* pq)
  */
 void enqueue(Queue* pq, ubyte data)
 {
-    //pq->tail++;
-    //count++;
-
-    //assert(pq->tail < QUEUESIZE);
     if (pq->count == QUEUESIZE)
     {
-    	//pq->tail = -1;
-    	//displayClearTextLine(6);
-    	//displayString(6, "Stack overflow on position %d", pq->tail);
+    	// Queue overflow
     	return;
     }
 
@@ -58,6 +53,7 @@ ubyte dequeue(Queue* pq)
 {
 	if (pq->count == 0)
 	{
+		// Nothing in queue, return zero
 		return 0;
 	}
 
@@ -80,12 +76,11 @@ ubyte dequeue(Queue* pq)
  */
 void show(Queue q)
 {
-    if (q.tail > -1)
+  if (q.tail > -1)
+  {
+    for (int i = 0; i < QUEUESIZE; i++)
     {
-        for (int i = 0; i < QUEUESIZE; i++)
-        {
-            //printf("[%d] = %d\n", i, q.a[i]);
-        		displayString(i, "[%d] = %d", i, q.a[i]);
-        }
+    		displayString(i, "[%d] = %d", i, q.a[i]);
     }
+  }
 }

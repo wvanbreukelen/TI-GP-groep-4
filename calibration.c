@@ -1,3 +1,10 @@
+/**
+* @file calibration.c
+* @authors Wiebe van Breukelen, Dylan Rakiman
+* @date 31-03-2017
+* @brief Calibrates the robot's light and color sensor
+*/
+
 #include <calibration.h>
 /**
  * Read our sensor values and compare them to our maximum and minimum values, adjusting accordingly

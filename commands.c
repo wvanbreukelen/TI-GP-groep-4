@@ -1,3 +1,9 @@
+/**
+* @file commands.c
+* @author Wiebe van Breukelen
+* @date 31-03-2017
+* @brief This file has the responsibity for the comminucation between the NXT and the client application
+*/
 
 #include <commands.h>
 
@@ -38,6 +44,11 @@ void robotTurnRight()
     moveRightPID();
 }
 
+/**
+* Handles a bluetooth message input with unsigned byte as input
+* @param input Unsigned byte
+* @return Execution successfull
+*/
 bool handleInput(ubyte input)
 {
 	return handleInput(&input);
@@ -55,8 +66,8 @@ bool handleInput(ubyte* input)
 
     switch (*input)
     {
-        case 0x4C:
-            //  Turn left
+      case 0x4C:
+       //  Turn left
 
       if (inMatrixMode)
       {
@@ -100,10 +111,6 @@ bool handleInput(ubyte* input)
       {
         if (!canMove(pos)) return false;
       }
-
-      // Go forward
-      // motor[motorB] = 25;
-      // motor[motorC] = 25;
 
       acceleration(motorB, motorC, 10);
 
@@ -153,18 +160,18 @@ bool handleInput(ubyte* input)
       break;
 
     case 0x42:
-           //  Matrix modus
-            inMatrixMode = true;
-            break;
+       //  Matrix modus
+        inMatrixMode = true;
+        break;
 
-        case 0x43:
-            //  Basic/line following modus
-            inMatrixMode = false;
-            break;
+    case 0x43:
+        //  Basic/line following modus
+        inMatrixMode = false;
+        break;
 
-        default:
-            //  If none of the above cases matches with the command, return false
-            return false;
+    default:
+        //  If none of the above cases matches with the command, return false
+        return false;
     }
 
     //  Display the current position of the robot
@@ -197,8 +204,10 @@ task commandHandlerTask()
             	{
                 if (isActive)
                 {
+                	// Robot is active, restart tasks to keep the robot moving
                 	startTask(startPID);
                 	startTask(handleCrossroads);
+
                 	if (DETECT_CROSSROADS) startTask(avoidObjectsTask);
                 }
             	} else {
@@ -224,10 +233,7 @@ task handleCrossroads()
 		{
 			stopTask(startPID);
 
-			//
-			//show(q);
-
-
+			// Check the amount of items in queue
 			if (q.count == 0)
 			{
 				// Stop drive motors
@@ -242,11 +248,7 @@ task handleCrossroads()
 				} else {
 					startTask(soundErrorTask);
 				}
-
 			}
-
-
-			//deceleration(motorB, motorC, 0, 4);
 		}
 
 		wait1Msec(50);

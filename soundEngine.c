@@ -1,4 +1,12 @@
+/**
+* @file soundEngine.c
+* @author Nino van Galen
+* @date 31-03-2017
+* @brief This file contains function used to play predefined sounds
+*/
+
 #include <soundEngine.h>
+
 /**
 * Infinitely plays the Imperial March looped, except when told to play one of the other songs.
 *
@@ -6,7 +14,7 @@
 **/
 void playSong(short song = 0)
 {
-	//set pointers to song
+	// Set pointers to song
 	if(song == 0)
 	{
 		size = sizeof(tempo1)/sizeof(tempo1[0]);

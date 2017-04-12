@@ -1,7 +1,21 @@
+/**
+* @file headSensor.c
+* @authors Tony van der Krogt, Dylan Rakiman
+* @date 31-03-2017
+* @brief Avoid objects using the ultrasonic (head) sensor
+*/
+
 #include <HeadSensor.h>
+
+// Circumference of LEGO wheel
 #define C_WHEEL 17.593
+
+// Sonar detection range for parcour mode
 #define SONAR_DETECT 20
+
+// Sonar detection range for matrix mode
 #define SONAR_DETECT_MATRIX 15
+
 /**
  * Check if a wall is detected
  * @param minDistCm Minimal distance to trigger wall
@@ -26,17 +40,23 @@ void evade()
 	// Read sensor value
 	short startValue = SensorValue[sonar];
 
+	// Set encoders to zero
 	nMotorEncoder[motorB] = 0;
 	nMotorEncoder[motorC] = 0;
+
 	// Turn on motors,
 	motor[motorB] = BASE_SPEED;
 	motor[motorC] = BASE_SPEED;
+
 	// Until our sensor value is bigger than our start value (implying we passed the object).
 	while (SensorValue[sonar] < SONAR_DETECT + 5) {}
+
 	deceleration(motorB, motorC, 0);
+
 	// Calculate distance travelled since beginning of this function by looking at motor degrees
 	short distDegrees = nMotorEncoder[motorB];
 	float dist =  (distDegrees / 360.0) * C_WHEEL;
+
 	// If the distance is bigger than 0, we have to correct our angle of entry and adjust accordingly.
 	if (dist > 0)
 	{
@@ -47,30 +67,35 @@ void evade()
 		nSyncedTurnRatio = -100;
 		robotTurn(motorC, correctionAngle);
 	}
+
 	// Distance from object to left/right tire
 	short rLeft = startValue + 9 + dist;
 	short rRight = startValue - 4 + dist;
+
 	// Amount of turns our wheels have to do
 	float dLeft = PI * rLeft / C_WHEEL;
 	float dRight = PI * rRight / C_WHEEL;
+
 	// Degrees our wheels have to turn
 	short turnLeft = dLeft * 360;
 	short turnRight = dRight * 360;
-	//  Finally, start motors with above values
+
+	// Finally, start motors with above values
 	nSyncedMotors = synchNone;
 	nMotorEncoder[motorB] = 0;
 	nMotorEncoder[motorC] = 0;
 	nMotorEncoderTarget[motorB] = turnRight;
 	nMotorEncoderTarget[motorC] = turnLeft;
-	//  Calculate difference in power required on both tires
+	// Calculate difference in power required on both tires
 	float diffMotor = (float) rLeft/rRight;
-	//  Adjust speeds of motors accordingly
+	// Adjust speeds of motors accordingly
 	motor[motorB] = BASE_SPEED;
 	motor[motorC] = BASE_SPEED * diffMotor;
 
-	//  Drive with above speeds until we find a line
+	// Drive with above speeds until we find a line
 	while (SensorValue[BWSensor] > BWOffset && SensorValue[CSensor] > COffset) {}
-	//  Turn off motors
+
+	// Turn off motors
 	motor[motorB] = 0;
 	motor[motorC] = 0;
 }
@@ -80,18 +105,18 @@ void evade()
  */
 void avoid(int whereTo)
 {
-	//  Turn robot 90 degrees counterclockwise
+	// Turn robot 90 degrees counterclockwise
 	nSyncedMotors = synchCB;
 	nSyncedTurnRatio = -100;
 	robotTurn(motorC, -180);
 
-	//  Turn the ultrasonic sensor clockwise
+	// Turn the ultrasonic sensor clockwise
 	robotTurn(motorA, whereTo);
 	nSyncedMotors = synchNone;
 
-	//  Evade object
+	// Evade object
 	evade();
-	//  Turn the head back
+	// Turn the head back
 	robotTurn(motorA, -whereTo);
 }
 

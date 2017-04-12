@@ -1,3 +1,10 @@
+/**
+* @file regulation.c
+* @authors Tony van der Krogt
+* @date 06-04-2017
+* @brief File responsible for motor speed regulation
+*/
+
 #include <regulation.h>
 
 /**

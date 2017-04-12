@@ -1,3 +1,10 @@
+/**
+* @file position.c
+* @authors Wiebe van Breukelen, Dylan Rakiman
+* @date 31-03-2017
+* @brief File responsible for (matrix) position memory
+*/
+
 #include <position.h>
 
 /**
@@ -65,6 +72,11 @@ bool canMove(Position* pos)
 	}
 }
 
+/**
+* Turn a motor a desired amount of degrees
+* @param m Motor
+* @param deg Amount of degrees to turn
+*/
 void robotTurn(short m, short deg)
 {
     nMotorEncoder[m] = 0;

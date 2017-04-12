@@ -1,5 +1,13 @@
+/**
+* @file PID.c
+* @authors Dylan Rakiman, Wiebe van Breukelen
+* @date 30-03-2017
+* @brief File responsible PD (Proportional derivative) based line following system
+*/
+
 #include <PID.h>
 
+// Maximal range of error constant
 #define MAX_RANGE 6
 
 /**
