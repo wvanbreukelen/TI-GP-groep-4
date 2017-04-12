@@ -1,3 +1,4 @@
+#include <"HeadSensor.h">
 #define C_WHEEL 17.593
 
 /**
@@ -5,7 +6,7 @@
  * @param minDistCm Minimal distance to trigger wall
  * @return Result
  */
-bool isWall(short minDistCm = 25)
+bool isWall(short minDistCm)
 {
 	if (SensorValue [sonar] > minDistCm)
 	{
