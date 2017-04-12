@@ -1,3 +1,5 @@
+#include <regulation.h>
+
 /**
  * Accelerate two motors to a specified target speed. Offset can be set to influence acceleration
  * @param ml Motor left
