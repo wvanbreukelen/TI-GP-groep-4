@@ -57,7 +57,13 @@ void moveLeftPID()
     //Turn on right motor
     motor[motorC] = 0;
     motor[motorB] = BASE_SPEED;
-   	wait1Msec(500);
+
+    if (inMatrixMode)
+    {
+    	wait1Msec(700);
+    } else {
+    	wait1Msec(500);
+    }
 
     while (SensorValue[CSensor] > COffset) {}
     motor[motorB] = 0;
@@ -68,7 +74,14 @@ void moveRightPID()
     //Turn on right motor
     motor[motorC] = BASE_SPEED;
     motor[motorB] = 0;
-		wait1Msec(500);
+
+    if (inMatrixMode)
+    {
+    	wait1Msec(700);
+    } else {
+    	wait1Msec(500);
+    }
+
 
     while (SensorValue[BWSensor] > BWOffset) {}
     motor[motorC] = 0;
