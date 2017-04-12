@@ -45,11 +45,15 @@ task constantPlay()//loop playlist
 {
 	while (1)
 	{
-		for (int i = 0; i < 4; i++)
+		/**for (int i = 0; i < 4; i++)
 		{
 			playSong(i);
 			wait1Msec(500);
-		}
+		}**/
+
+		playSound(3);
+		wait1Msec(500);
+
 	}
 }
 
