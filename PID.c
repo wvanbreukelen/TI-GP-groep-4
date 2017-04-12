@@ -70,13 +70,8 @@ task startPID()
 	//We start off by initialising some constants.
 	const short Kp = 400;
 	const short Kd = 100;
-<<<<<<< HEAD
-	// If we are in matrix mode, decrease the motor power to improve crossroad detection
-	const short Tp = (inMatrixMode) ? 15 : 25;
-=======
 	//Our base speed on a straight line. This is lower for matrix mode.
 	const short Tp = (inMatrixMode) ? 15 : BASE_SPEED;
->>>>>>> c9dfa0abba301d26dc68850c0a9cbdadef816a00
 	//Initialising variables used every loop
 	short lastError = 0;
 	short derivative = 0;

@@ -8,7 +8,7 @@
  * @param maxY Maximal vertical value. Increments when going north.
  * @param orientation Robot orientation. 0 is North, 1 is East, 2 is South, 3 is West.
  */
-void initPosition(Position* pos, short maxX = 4, short maxY = 4, char orientation = 0)
+void initPosition(Position* pos, short maxX, short maxY, char orientation)
 {
 	pos->x = 0;
 	pos->y = 0;
