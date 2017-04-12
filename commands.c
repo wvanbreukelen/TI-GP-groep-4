@@ -191,6 +191,8 @@ task commandHandlerTask()
         			// Add to queue
             	enqueue(&q, (ubyte) nRcvBuffer);
         		} else {
+        			stopTask(startPID);
+
         			if (handleInput(nRcvBuffer))
             	{
                 if (isActive)

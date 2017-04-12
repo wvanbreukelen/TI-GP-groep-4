@@ -9,7 +9,7 @@
 #define BASE_SPEED 25
 #define DETECT_CROSSROADS 1
 #define AVOID_OBJECTS 1
-#define PLAY_ENV_SOUNDS 0
+#define PLAY_ENV_SOUNDS 1
 #define MATRIX_SIZE_X 4
 #define MATRIX_SIZE_Y 4
 
@@ -35,7 +35,6 @@ Position* pos;
 
 void startTasks()
 {
-	//startTask(constantPlay);
 	if (AVOID_OBJECTS) startTask(avoidObjectsTask);
 	startTask(startPID);
 	if (DETECT_CROSSROADS) startTask(handleCrossroads);
