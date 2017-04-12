@@ -8,7 +8,7 @@
 bool isWall(short minDistCm = 25);
 void newEvade();
 void avoid(int whereTo);
-void avoid(int whereTo);
+
 
 
 #endif //HEADSENSOR_H

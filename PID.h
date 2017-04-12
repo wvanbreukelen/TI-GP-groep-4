@@ -5,8 +5,6 @@
 #ifndef PID_H
 #define PID_H
 
-#define MAX_RANGE 6
-
 //Initialise global variables
 short BWBlack = 35;
 short BWWhite = 60;
@@ -28,10 +26,6 @@ short errorAmountPID (short BWError, short CError);
 bool onCrossRoads(short BW, short C);
 void moveLeftPID();
 void moveRightPID();
-
-
 task startPID();
 task handleCrossroads();
-
-
 #endif //PID_H

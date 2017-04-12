@@ -1,5 +1,7 @@
 #include <PID.h>
 
+#define MAX_RANGE 6
+
 /**
  * Initialise PID task by entering our standard/calibration values and calculating offset & max delta.
  * @param cal Calibration struct pointer, contains calibration values
@@ -56,7 +58,12 @@ void moveLeftPID()
     motor[motorC] = 0;
     motor[motorB] = 25;
 
-    wait1Msec(500);
+    if (inMatrixMode)
+    {
+    	wait1Msec(700);
+    } else {
+    	wait1Msec(500);
+    }
 
     while (SensorValue[CSensor] > COffset) {}
     motor[motorB] = 0;
@@ -68,7 +75,13 @@ void moveRightPID()
     motor[motorC] = 25;
     motor[motorB] = 0;
 
-    wait1Msec(500);
+    if (inMatrixMode)
+    {
+    	wait1Msec(700);
+    } else {
+    	wait1Msec(500);
+    }
+
 
     while (SensorValue[BWSensor] > BWOffset) {}
     motor[motorC] = 0;
@@ -122,9 +135,11 @@ task handleCrossroads()
 		{
 			stopTask(startPID);
 
-            // Stop drive motors
+      // Stop drive motors
 			motor[motorB] = 0;
 			motor[motorC] = 0;
+
+			//deceleration(motorB, motorC, 0, 4);
 		}
 
 		wait1Msec(50);

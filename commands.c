@@ -107,17 +107,32 @@ bool handleInput(ubyte* input)
             }
 
             // Go forward
-            motor[motorB] = 25;
-            motor[motorC] = 25;
+            //motor[motorB] = 25;
+            //motor[motorC] = 25;
+
+            acceleration(motorB, motorC, 10);
 
              // Wait until the robot has passed the crossroad
             while (onCrossRoads(SensorValue[BWSensor], SensorValue[CSensor])) {}
 
             break;
         case 0x46:
-            // Fire, stop the robot
-            stopAllTasks();
-            stopAllMotors();
+        		if (isActive)
+        		{
+        				//stopTask(handleCrossroads);
+            		//stopTask(startPID);
+            		//stopTask(avoidObjectsTask);
+
+
+            		stopAllMotors();
+        		} else {
+        				//startTask(handleCrossroads);
+        				//startTask(startPID);
+        				//startTask(avoidObjectsTask);
+        		}
+
+        		// Toggle
+        		isActive = !isActive;
 
             break;
         case 0x44:
@@ -192,9 +207,12 @@ task commandHandlerTask()
             // Handle the bluetooth command
             if (handleInput(nRcvBuffer))
             {
-                startTask(startPID);
-                startTask(handleCrossroads);
-                if (DETECT_CROSSROADS) startTask(avoidObjectsTask);
+                if (isActive)
+                {
+                	startTask(startPID);
+                	startTask(handleCrossroads);
+                	if (DETECT_CROSSROADS) startTask(avoidObjectsTask);
+                }
             } else {
                 // Something went wrong, sound an error
                 startTask(soundErrorTask);

@@ -12,7 +12,7 @@ void acceleration(short ml, short mr, short targetSpeed, short alcOffset)
 	short currentMotorSpeed = motor[ml];
 
 	while (currentMotorSpeed < targetSpeed)
-    {
+	{
 		currentMotorSpeed += alcOffset;
 
 		motor[ml] = currentMotorSpeed;
@@ -33,10 +33,13 @@ void deceleration(short ml, short mr, short targetSpeed, short declOffset)
 	short currentMotorSpeed = (motor[ml] > motor[mr]) ? motor[ml] : motor[mr];
 	while (currentMotorSpeed > targetSpeed)
     {
-        currentMotorSpeed -= declOffset;
+    		currentMotorSpeed -= (currentMotorSpeed >= declOffset) ? declOffset : 1;
 
         motor[ml] = currentMotorSpeed;
         motor[mr] = currentMotorSpeed;
         wait1Msec(50);
     }
+
+    motor[ml] = targetSpeed;
+    motor[mr] = targetSpeed;
 }

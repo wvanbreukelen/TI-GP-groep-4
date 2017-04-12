@@ -15,6 +15,11 @@ const int kMaxSizeOfMessage = 30;
  */
 const int inboxSize = 5;
 
+/**
+* Is robot currently running?
+*/
+bool isActive = true;
+
 int readBluetoothData(ubyte* buffer, int nMaxBufferSize);
 void robotTurnLeft();
 void robotTurnRight();
