@@ -1,5 +1,6 @@
 #include <HeadSensor.h>
 #define C_WHEEL 17.593
+#define SONAR_DETECT 25
 
 /**
  * Check if a wall is detected
@@ -12,140 +13,65 @@ bool isWall(short minDistCm)
 	{
 		return false;
 	} else {
-		deceleration(motorB, motorC, 25);
+		deceleration(motorB, motorC, BASE_SPEED);
 		return true;
 	}
 }
 
 /**
- * Evade an object
- * @param whereTo Amount of degress needed to turn the ultrasonic sensor
+ * Evade an object by calculating its radius and following a
  */
-//void evade(int whereTo)
-//{
-//	// Minimal ultrasonic distance for detecting a object
-//	int minDistCm = 30;
-
-//	// While status booleans
-//	bool sensorPart2 = false;
-//	bool sensor = true;
-
-//	// Front and back of object
-//	while (sensor)
-//	{
-//		if (SensorValue [sonar] < minDistCm)
-//		{
-//			acceleration(motorB, motorC, 20);
-//		} else {
-//			// Object detected, wait for 500 milliseconds to compensate with 90 degrees turn (overshoot)
-//			wait1Msec(500);
-//			deceleration(motorB, motorC, 0);
-//			// Turn robot
-//			robotTurn(motorC,360);
-
-//			acceleration(motorB, motorC, 20);
-
-//			// Keep the motors running at 20% speed until object is seen again
-//			while (SensorValue[sonar] > minDistCm) {wait1Msec(20);}
-
-//			// Little beep to notice user of object
-//			startTask(soundErrorTask);
-
-//			// Some delay to minimize variating readings in the next while loop
-//			wait1Msec(500);
-
-//			// Set while loops status booleans
-//			sensorPart2 = true;
-//			sensor = false;
-
-//			// Side of object
-//			while (sensorPart2)
-//			{
-//				// When sensor value is bigger than minimal object distance, rotate the robot 90 degress and turn on the motors.
-//				if (SensorValue [sonar] > minDistCm)
-//				{
-//					// Object detected, wait for 500 milliseconds to compensate with 90 degrees turn (overshoot)
-//					wait1Msec(500);
-
-//					deceleration(motorB, motorC, 0);
-//					robotTurn(motorC, 360);
-
-//					// Ultrasone viewing angle to original position (face to front)
-//					robotTurn(motorA, whereTo * -1);
-
-//					// Stop myself (loop)
-//					sensorPart2 = false;
-//				}
-//			}
-//		}
-//	}
-//}
-void newEvade()
+void evade()
 {
-	short minDistCm = 25;
-	short currValue = -1, startValue = SensorValue[sonar];
-	short offset = -1;
+	// Read sensor value
+	short startValue = SensorValue[sonar];
 
 	nMotorEncoder[motorB] = 0;
 	nMotorEncoder[motorC] = 0;
-
+	// Turn on motors,
 	motor[motorB] = BASE_SPEED;
 	motor[motorC] = BASE_SPEED;
-
-	while (SensorValue[sonar] <= minDistCm) {}
-
-	motor[motorB] = 0;
-	motor[motorC] = 0;
-
+	// Until our sensor value is bigger than our start value (implying we passed the object).
+	while (SensorValue[sonar] <= startValue + 5) {}
+	// Calculate distance travelled since beginning of this function by looking at motor degrees
 	short distDegrees = nMotorEncoder[motorB];
 	float dist =  (distDegrees / 360.0) * C_WHEEL;
-
-	float correctionAngle = radiansToDegrees(atan((dist * dist + (minDistCm + dist) * (minDistCm + dist) - minDistCm - dist) / dist));
-
-	nSyncedMotors = synchCB;
-	nSyncedTurnRatio = -100;
-	robotTurn(motorC, correctionAngle);
-
-	//Distance from object to left/right tire
-	float rLeft = startValue + 5 + dist;
-	float rRight = startValue - 2 + dist;
-	//Distance our left or right wheel has to turn
-	float dLeft = PI * rLeft;
-	float dRight = PI * rRight;
-	//Degrees our wheels have to turn
-	float turnLeft = dLeft / C_WHEEL * 360;
-	float turnRight = dRight / C_WHEEL * 360;
-	//Finally, start motors with above values
+	// If the distance is bigger than 0, we have to correct our angle of entry and adjust accordingly.
+	if (dist > 0)
+	{
+		// The following formula uses SOSCASTOA and pythagoras to calculate the angle we have to turn right in order to keep on track.
+		float correctionAngle = radiansToDegrees(atan((dist * dist + (startValue + dist) * (startValue + dist) - (startValue + dist)) / dist));
+		// Turn robot ^ degrees
+		nSyncedMotors = synchCB;
+		nSyncedTurnRatio = -100;
+		robotTurn(motorC, correctionAngle);
+	}
+	// Distance from object to left/right tire
+	short rLeft = startValue + 9 + dist;
+	short rRight = startValue - 4 + dist;
+	// Amount of turns our wheels have to do
+	float dLeft = PI * rLeft / C_WHEEL;
+	float dRight = PI * rRight / C_WHEEL;
+	// Degrees our wheels have to turn
+	short turnLeft = dLeft * 360;
+	short turnRight = dRight * 360;
+	//  Finally, start motors with above values
+	nSyncedMotors = synchNone;
+	nMotorEncoder[motorB] = 0;
+	nMotorEncoder[motorC] = 0;
 	nMotorEncoderTarget[motorB] = turnRight;
 	nMotorEncoderTarget[motorC] = turnLeft;
-
-	float diffMotor = rLeft/rRight;
-
-	displayString(2, "%f",diffMotor);
-
+	//  Calculate difference in power required on both tires
+	float diffMotor = (float) rLeft/rRight;
+	//  Adjust speeds of motors accordingly
 	motor[motorB] = BASE_SPEED;
 	motor[motorC] = BASE_SPEED * diffMotor;
 
-	while (motor[motorC] > 0) {}
-
-	//We evade until we detect a line
-	while (SensorValue[BWSensor] > BWOffset && SensorValue[CSensor] > COffset)
-	{
-		//if ((currValue = SensorValue[sonar]) > startValue)
-		//{
-		//	offset = 1;
-		//} else if ((currValue = SensorValue[sonar]) < startValue) {
-		//	offset = -1;
-		//} else {
-		//	motor[motorB] = BASE_SPEED;
-		//	motor[motorC] = BASE_SPEED;
-		//	offset = 0;
-		//}
-		//motor[motorC] += offset;
-		//motor[motorB] -= offset;
-
-		//wait1Msec(100);
-	}
+	//  Drive with above speeds until we find a line
+	while (SensorValue[BWSensor] > BWOffset && SensorValue[CSensor] > COffset) {}
+	//  Turn off motors
+	motor[motorB] = 0;
+	motor[motorC] = 0;
 }
 /**
  * Avoid a object
@@ -153,17 +79,19 @@ void newEvade()
  */
 void avoid(int whereTo)
 {
-	// Turn robot 90 degrees counterclockwise
+	//  Turn robot 90 degrees counterclockwise
 	nSyncedMotors = synchCB;
 	nSyncedTurnRatio = -100;
 	robotTurn(motorC, -180);
 
-	// Turn the ultrasonic sensor clockwise
+	//  Turn the ultrasonic sensor clockwise
 	robotTurn(motorA, whereTo);
 	nSyncedMotors = synchNone;
 
-	// Evade object
-	newEvade();
+	//  Evade object
+	evade();
+	//  Turn the head back
+	robotTurn(motorA, -whereTo);
 }
 
 /**
@@ -173,38 +101,28 @@ task avoidObjectsTask()
 {
 	while (1)
 	{
-		if (isWall(20))
+		if (isWall(SONAR_DETECT - 5))
 		{
-			// Object is detected, make a sound
+			//  Object is detected, make a sound
 			startTask(soundErrorTask);
 
-			// Stop PID task and motors from running
+			//  Stop PID task and motors from running
 			stopTask(startPID);
 			hogCPU();
 			stopAllMotors();
+			// If we are in the matrix, turn around 180 degrees.
+			if (inMatrixMode)
+			{
+				robotTurnAround();
+				pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
+        pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
+        canMove(pos);
+			} else {
+			// Else, go for evasive maneuvres.
+				avoid(-90);
+			}
 
-			//NEW TEST CODE//////////////////////////////////
-			avoid(-90);
-
-
-			//// Avoid the object
-			//avoid(-90);
-
-			//// Start motors to look for our original line
-			//acceleration(motorB, motorC, 15);
-			//while (!onCrossRoads(SensorValue[BWSensor], SensorValue[CSensor])) {}
-
-			//// Line detected! Stop the motors!
-			//deceleration(motorB, motorC, 0);
-
-			//// Rotate 90 degrees to get in front of the line
-			////nSyncedMotors = synchBC;
-			////nSyncedTurnRatio = -100;
-			//robotTurn(motorB, 370);
-
-			//nSyncedMotors = synchNone;
-
-			// Start the PID task again
+			//  Start the PID task again
 			startTask(startPID);
 			releaseCPU();
 		}

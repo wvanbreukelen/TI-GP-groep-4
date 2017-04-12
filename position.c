@@ -19,7 +19,6 @@ void initPosition(Position* pos, short maxX, short maxY, char orientation)
 /**
  * Calculate whether or not we can move and adjusts position struct accordingly, AHEAD OF TIME!
  * @param pos Position struct
- * @param forward Boolean indicating if we are to move up or down.
  * @return Returns boolean on whether or not the robot is allowed to move.
  */
 bool canMove(Position* pos)
@@ -28,28 +27,28 @@ bool canMove(Position* pos)
 
 	switch (pos->orientation)
 	{
-		case 0: //Moving north, increment y
-			if (pos->maxY >= pos->y + 1) //If we are within boundaries,
+		case 0: // Moving north, increment y
+			if (pos->maxY >= pos->y + 1) // If we are within boundaries,
 			{
-				pos->y++; //edit our position in the struct to represent the next node our robot will drive to.
+				pos->y++; // edit our position in the struct to represent the next node our robot will drive to.
 				return true;
 			}
 			return false;
-		case 1: //Moving east, increment x
+		case 1: // Moving east, increment x
 			if (pos->maxX >= pos->x + 1)
 			{
 				pos->x++;
 				return true;
 			}
 			return false;
-		case 2: //Moving south, decrement y
+		case 2: // Moving south, decrement y
 			if (pos->y - 1 >= 0)
 			{
 				pos->y--;
 				return true;
 			}
 			return false;
-		case 3: //Moving west, decrement x
+		case 3: // Moving west, decrement x
 
 			if (pos->x - 1 >= 0)
 			{

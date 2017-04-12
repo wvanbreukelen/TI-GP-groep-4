@@ -8,14 +8,14 @@
  */
 int readBluetoothData(ubyte* buffer, int nMaxBufferSize)
 {
-    // Get size of latest message
+    //  Get size of latest message
     int sizeOfMessage = cCmdMessageGetSize(inboxSize);
 
     if (sizeOfMessage > nMaxBufferSize)
-        // Message size is above max buffer size, set the new buffer size
+        //  Message size is above max buffer size, set the new buffer size
         sizeOfMessage = nMaxBufferSize;
     if (sizeOfMessage > 0)
-        // Place the message into out predefined ubyte buffer using a pointer
+        //  Place the message into out predefined ubyte buffer using a pointer
         cCmdMessageRead(buffer, sizeOfMessage, inboxSize);
 
     return sizeOfMessage;
@@ -61,128 +61,128 @@ bool handleInput(ubyte* input)
     switch (*input)
     {
         case 0x4C:
-            // Turn left
+            //  Turn left
 
-            if (inMatrixMode)
-            {
-                // Change our orientation. If it's north, change to west. Else decrement orientation.
-                pos->orientation = (pos->orientation == 0) ? 3 : pos->orientation - 1;
+      if (inMatrixMode)
+      {
+        // Change our orientation. If it's north, change to west. Else decrement orientation.
+        pos->orientation = (pos->orientation == 0) ? 3 : pos->orientation - 1;
 
-                // Check if the robot has the right to move in the desired direction
-                if (!canMove(pos)) {
-                    pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
-                    return false;
-                }
-            }
+        // Check if the robot has the right to move in the desired direction
+        if (!canMove(pos)) {
+          pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
+          return false;
+        }
+      }
 
-            stopAllMotors();
-            robotTurnLeft();
+      stopAllMotors();
+      robotTurnLeft();
 
-            break;
-        case 0x52:
-            // Turn right
+      break;
+    case 0x52:
+      // Turn right
 
-            if (inMatrixMode)
-            {
-                pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
+      if (inMatrixMode)
+      {
+        pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
 
-                // Check if the robot has the right to move in the desired direction
-                if (!canMove(pos))
-                {
-                    pos->orientation = (pos->orientation == 0) ? 3 : pos->orientation - 1;
-                    return false;
-                }
-            }
+        // Check if the robot has the right to move in the desired direction
+        if (!canMove(pos))
+        {
+          pos->orientation = (pos->orientation == 0) ? 3 : pos->orientation - 1;
+          return false;
+        }
+      }
 
-            stopAllMotors();
-            robotTurnRight();
+      stopAllMotors();
+      robotTurnRight();
 
-            break;
-        case 0x55:
-            // Move up
+      break;
+    case 0x55:
+      // Move up
 
-            if (inMatrixMode)
-            {
-                if (!canMove(pos)) return false;
-            }
+      if (inMatrixMode)
+      {
+        if (!canMove(pos)) return false;
+      }
 
-            // Go forward
-            //motor[motorB] = 25;
-            //motor[motorC] = 25;
+      // Go forward
+      // motor[motorB] = 25;
+      // motor[motorC] = 25;
 
-            acceleration(motorB, motorC, 10);
+      acceleration(motorB, motorC, 10);
 
-             // Wait until the robot has passed the crossroad
-            while (onCrossRoads(SensorValue[BWSensor], SensorValue[CSensor])) {}
+       // Wait until the robot has passed the crossroad
+      while (onCrossRoads(SensorValue[BWSensor], SensorValue[CSensor])) {}
 
-            break;
-        case 0x46:
-        		if (isActive)
-        		{
-        				//stopTask(handleCrossroads);
-            		//stopTask(startPID);
-            		//stopTask(avoidObjectsTask);
+      break;
+    case 0x46:
+    		if (isActive)
+    		{
+    				// stopTask(handleCrossroads);
+      		// stopTask(startPID);
+      		// stopTask(avoidObjectsTask);
 
 
-            		stopAllMotors();
-        		} else {
-        				//startTask(handleCrossroads);
-        				//startTask(startPID);
-        				//startTask(avoidObjectsTask);
-        		}
+      		stopAllMotors();
+    		} else {
+    				// startTask(handleCrossroads);
+    				// startTask(startPID);
+    				// startTask(avoidObjectsTask);
+    		}
 
-        		// Toggle
-        		isActive = !isActive;
+    		// Toggle
+    		isActive = !isActive;
 
-            break;
-        case 0x44:
-            // Turn around
-            stopAllMotors();
-            robotTurnAround();
+      break;
+		case 0x44:
+      // Turn around
+      stopAllMotors();
+      robotTurnAround();
 
-            if (inMatrixMode)
-            {
-                pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
-                pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
+      if (inMatrixMode)
+      {
+        pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
+        pos->orientation = (pos->orientation == 3) ? 0 : pos->orientation + 1;
 
-                // Check if the robot has the right to move in the desired direction
-                if (!canMove(pos)) return false;
-            }
+        // Check if the robot has the right to move in the desired direction
+        if (!canMove(pos)) return false;
+      }
 
-            break;
-        case 0x41:
-            // Reset robot subtasks
-            stopAllMotors();
-            stopTask(startPID);
-            stopTask(avoidObjectsTask);
-            stopTask(handleCrossroads);
+      break;
+    case 0x41:
+      // Reset robot subtasks
+      stopAllMotors();
+      stopTask(startPID);
+      stopTask(avoidObjectsTask);
+      stopTask(handleCrossroads);
 
-            initPID(calibrate(), true);
+      initPID(calibrate(), true);
 
-            initPosition(pos, MATRIX_SIZE_X, MATRIX_SIZE_Y);
+      initPosition(pos, MATRIX_SIZE_X, MATRIX_SIZE_Y);
 
-            if (DETECT_CROSSROADS) startTask(avoidObjectsTask);
-            startTask(startPID);
-            if (AVOID_OBJECTS) startTask(handleCrossroads);
+      if (DETECT_CROSSROADS) startTask(avoidObjectsTask);
+      startTask(startPID);
+      if (AVOID_OBJECTS) startTask(handleCrossroads);
 
-            break;
+      break;
 
-        case 0x42:
-            // Matrix modus
+    case 0x42:
+           //  Matrix modus
             inMatrixMode = true;
             break;
 
         case 0x43:
-            // Basic/line following modus
+            //  Basic/line following modus
             inMatrixMode = false;
             break;
 
         default:
-            // If none of the above cases matches with the command, return false
+            //  If none of the above cases matches with the command, return false
             return false;
     }
 
-    // Display the current position of the robot
+    //  Display the current position of the robot
     displayPosition(pos);
 
     return true;
@@ -199,12 +199,12 @@ task commandHandlerTask()
     {
         if (readBluetoothData(nRcvBuffer, kMaxSizeOfMessage) > 0)
         {
-            // Message received, stop tasks that influence the motors
+            //  Message received, stop tasks that influence the motors
             stopTask(handleCrossroads);
             stopTask(startPID);
             stopTask(avoidObjectsTask);
 
-            // Handle the bluetooth command
+            //  Handle the bluetooth command
             if (handleInput(nRcvBuffer))
             {
                 if (isActive)
@@ -214,7 +214,7 @@ task commandHandlerTask()
                 	if (DETECT_CROSSROADS) startTask(avoidObjectsTask);
                 }
             } else {
-                // Something went wrong, sound an error
+                //  Something went wrong, sound an error
                 startTask(soundErrorTask);
             }
         }
