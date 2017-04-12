@@ -57,13 +57,7 @@ void moveLeftPID()
     //Turn on right motor
     motor[motorC] = 0;
     motor[motorB] = BASE_SPEED;
-
-    if (inMatrixMode)
-    {
-    	wait1Msec(700);
-    } else {
-    	wait1Msec(500);
-    }
+   	wait1Msec(500);
 
     while (SensorValue[CSensor] > COffset) {}
     motor[motorB] = 0;
@@ -74,14 +68,7 @@ void moveRightPID()
     //Turn on right motor
     motor[motorC] = BASE_SPEED;
     motor[motorB] = 0;
-
-    if (inMatrixMode)
-    {
-    	wait1Msec(700);
-    } else {
-    	wait1Msec(500);
-    }
-
+		wait1Msec(500);
 
     while (SensorValue[BWSensor] > BWOffset) {}
     motor[motorC] = 0;
@@ -97,7 +84,7 @@ task startPID()
 	const short Kp = 300;
 	const short Kd = 100;
 	//Our base speed on a straight line. This is lower for matrix mode.
-	const short Tp = (inMatrixMode) ? 15 : BASE_SPEED;
+	const short Tp = BASE_SPEED;
 	//Initialising variables used every loop
 	short lastError = 0;
 	short derivative = 0;
