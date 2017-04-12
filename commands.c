@@ -38,17 +38,6 @@ void robotTurnRight()
     moveRightPID();
 }
 
-/**
- * Turn the robot around
- */
-void robotTurnAround()
-{
-    nSyncedMotors = synchCB;
-    nSyncedTurnRatio = -100;
-    robotTurn(motorC, 360);
-    nSyncedMotors = synchNone;
-}
-
 bool handleInput(ubyte input)
 {
 	return handleInput(&input);

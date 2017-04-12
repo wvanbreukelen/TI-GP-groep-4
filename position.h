@@ -14,6 +14,7 @@ typedef struct {
 void initPosition(Position* pos, short maxX = 4, short maxY = 4, char orientation = 0);
 bool canMove(Position* pos);
 void robotTurn(short m, short deg);
+void robotTurnAround();
 void displayPosition(Position* pos);
 
 #endif //POSITION_H

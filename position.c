@@ -81,6 +81,17 @@ void robotTurn(short m, short deg)
 }
 
 /**
+ * Turn the robot around
+ */
+void robotTurnAround()
+{
+    nSyncedMotors = synchCB;
+    nSyncedTurnRatio = -100;
+    robotTurn(motorC, 360);
+    nSyncedMotors = synchNone;
+}
+
+/**
  * Display current position on NXT display
  * @param pos Position struct
  */
