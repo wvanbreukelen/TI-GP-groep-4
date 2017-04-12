@@ -122,26 +122,3 @@ task startPID()
 		lastError = error;
 	}
 }
-
-/**
- * Detects and handlers crossroads
- */
-task handleCrossroads()
-{
-	while (1)
-	{
-		//If we set the PID system to stop at crossroads, check for crossroads and break on detection.
-		if (stopForCrossRoads && onCrossRoads(BWValue, CValue))
-		{
-			stopTask(startPID);
-
-      // Stop drive motors
-			motor[motorB] = 0;
-			motor[motorC] = 0;
-
-			//deceleration(motorB, motorC, 0, 4);
-		}
-
-		wait1Msec(50);
-	}
-}

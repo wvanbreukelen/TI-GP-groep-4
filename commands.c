@@ -1,3 +1,4 @@
+
 #include <commands.h>
 
 /**
@@ -46,6 +47,11 @@ void robotTurnAround()
     nSyncedTurnRatio = -100;
     robotTurn(motorC, 360);
     nSyncedMotors = synchNone;
+}
+
+bool handleInput(ubyte input)
+{
+	return handleInput(&input);
 }
 
 /**
@@ -119,17 +125,8 @@ bool handleInput(ubyte* input)
         case 0x46:
         		if (isActive)
         		{
-        				//stopTask(handleCrossroads);
-            		//stopTask(startPID);
-            		//stopTask(avoidObjectsTask);
-
-
-            		stopAllMotors();
-        		} else {
-        				//startTask(handleCrossroads);
-        				//startTask(startPID);
-        				//startTask(avoidObjectsTask);
-        		}
+            	stopAllMotors();
+  					}
 
         		// Toggle
         		isActive = !isActive;
@@ -193,12 +190,33 @@ bool handleInput(ubyte* input)
  */
 task commandHandlerTask()
 {
+    init_queue(&q);
+
     ubyte nRcvBuffer[kMaxSizeOfMessage];
 
     while (true)
     {
         if (readBluetoothData(nRcvBuffer, kMaxSizeOfMessage) > 0)
         {
+        		if (nRcvBuffer == 0x4C || nRcvBuffer == 0x52 || nRcvBuffer == 0x55 || nRcvBuffer == 0x44)
+        		{
+        			// Add to queue
+            	enqueue(&q, (ubyte) nRcvBuffer);
+        		} else {
+        			if (handleInput(nRcvBuffer))
+            	{
+                if (isActive)
+                {
+                	startTask(startPID);
+                	startTask(handleCrossroads);
+                	if (DETECT_CROSSROADS) startTask(avoidObjectsTask);
+                }
+            	} else {
+                // Something went wrong, sound an error
+                startTask(soundErrorTask);
+            	}
+        		}
+        		/**
             // Message received, stop tasks that influence the motors
             stopTask(handleCrossroads);
             stopTask(startPID);
@@ -216,9 +234,49 @@ task commandHandlerTask()
             } else {
                 // Something went wrong, sound an error
                 startTask(soundErrorTask);
-            }
+            }**/
+
+            //ubyte data = *nRcvBuffer;
+
+
         }
 
         wait1Msec(200);
     }
+}
+
+/**
+ * Detects and handlers crossroads
+ */
+task handleCrossroads()
+{
+	while (1)
+	{
+		//If we set the PID system to stop at crossroads, check for crossroads and break on detection.
+		if (stopForCrossRoads && onCrossRoads(BWValue, CValue))
+		{
+			stopTask(startPID);
+
+			//
+			//show(q);
+
+
+			if (q.count == 0)
+			{
+				// Stop drive motors
+				motor[motorB] = 0;
+				motor[motorC] = 0;
+			} else {
+				ubyte data = dequeue(&q);
+
+				handleInput(data);
+				startTask(startPID);
+			}
+
+
+			//deceleration(motorB, motorC, 0, 4);
+		}
+
+		wait1Msec(50);
+	}
 }
