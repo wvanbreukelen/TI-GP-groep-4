@@ -36,6 +36,7 @@ void evade()
 	// Calculate distance travelled since beginning of this function by looking at motor degrees
 	short distDegrees = nMotorEncoder[motorB];
 	float dist =  (distDegrees / 360.0) * C_WHEEL;
+	deceleration(motorB, motorC, 0);
 	// If the distance is bigger than 0, we have to correct our angle of entry and adjust accordingly.
 	if (dist > 0)
 	{
