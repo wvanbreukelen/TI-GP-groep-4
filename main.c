@@ -8,7 +8,7 @@
 
 #define BASE_SPEED 25
 #define DETECT_CROSSROADS 1
-#define AVOID_OBJECTS 0
+#define AVOID_OBJECTS 1
 #define PLAY_ENV_SOUNDS 0
 #define MATRIX_SIZE_X 4
 #define MATRIX_SIZE_Y 4

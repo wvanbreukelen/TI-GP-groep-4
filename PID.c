@@ -56,7 +56,7 @@ void moveLeftPID()
 {
     //Turn on right motor
     motor[motorC] = 0;
-    motor[motorB] = 25;
+    motor[motorB] = BASE_SPEED;
 
     if (inMatrixMode)
     {
@@ -72,7 +72,7 @@ void moveLeftPID()
 void moveRightPID()
 {
     //Turn on right motor
-    motor[motorC] = 25;
+    motor[motorC] = BASE_SPEED;
     motor[motorB] = 0;
 
     if (inMatrixMode)
@@ -94,7 +94,7 @@ void moveRightPID()
 task startPID()
 {
 	//We start off by initialising some constants.
-	const short Kp = 400;
+	const short Kp = 350;
 	const short Kd = 100;
 	//Our base speed on a straight line. This is lower for matrix mode.
 	const short Tp = (inMatrixMode) ? 15 : BASE_SPEED;
