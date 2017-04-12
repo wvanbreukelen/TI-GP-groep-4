@@ -7,7 +7,7 @@
  * @param targetSpeed Target speed
  * @param alcOffset Acceleration offset (default = 1)
  */
-void acceleration(short ml, short mr, short targetSpeed, short alcOffset = 1)
+void acceleration(short ml, short mr, short targetSpeed, short alcOffset)
 {
 	short currentMotorSpeed = motor[ml];
 
@@ -28,7 +28,7 @@ void acceleration(short ml, short mr, short targetSpeed, short alcOffset = 1)
  * @param targetSpeed Target speed
  * @param breakOffset Deceleration offset (default = 1)
  */
-void deceleration(short ml, short mr, short targetSpeed, short declOffset = 1)
+void deceleration(short ml, short mr, short targetSpeed, short declOffset)
 {
 	short currentMotorSpeed = (motor[ml] > motor[mr]) ? motor[ml] : motor[mr];
 	while (currentMotorSpeed > targetSpeed)

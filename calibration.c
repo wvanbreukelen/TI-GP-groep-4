@@ -1,10 +1,4 @@
-typedef struct
-{
-	short CBlack;
-	short CWhite;
-	short BWBlack;
-	short BWWhite;
-} Calibration;
+#include <calibration.h>
 
 void findBoundaries(Calibration* cal)
 {
@@ -30,6 +24,7 @@ void findBoundaries(Calibration* cal)
 		cal->CBlack = CValue;
 	}
 }
+
 Calibration* calibrate()
 {
 	Calibration cal;

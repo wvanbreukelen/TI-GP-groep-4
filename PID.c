@@ -1,25 +1,11 @@
-#define MAX_RANGE 6
-
-//Initialise global variables
-short BWBlack = 35;
-short BWWhite = 60;
-short BWOffset = -1;
-float BWMax;
-
-// Default calibration values
-short CBlack = 22;
-short CWhite = 63;
-short COffset = -1;
-float CMax;
-
-bool stopForCrossRoads = true;
+#include <PID.h>
 
 /**
  * Initialise PID task by entering our standard/calibration values and calculating offset & max delta.
  * @param cal Calibration struct pointer, contains calibration values
  * @param fullPID Boolean to toggle crossroads detection
  */
-void initPID(Calibration* cal, bool fullPID = true)
+void initPID(Calibration* cal, bool fullPID)
 {
 	//Set globals in this file to calibration values
 	BWBlack = cal->BWBlack;
@@ -49,6 +35,7 @@ short errorAmountPID (short BWError, short CError)
 	//Using the following formula, our delta has a range of [-1, 1]. Multiply by MAX_RANGE to increase its range.
 	return ((CError - COffset) / CMax - (BWError - BWOffset) / BWMax) * MAX_RANGE;
 }
+
 /**
  * Conclude whether or not our robot is at a crossroads. If both sensor values are below average, return true.
  * @param BW Value of our black and white sensor
@@ -60,7 +47,33 @@ bool onCrossRoads(short BW, short C)
 	return (BW <= BWOffset && C <= COffset);
 }
 
-short BWValue, CValue;
+/**
+ * Turn on right motor until right sensor detects the line
+ */
+void moveLeftPID()
+{
+    //Turn on right motor
+    motor[motorC] = 0;
+    motor[motorB] = 25;
+
+    wait1Msec(500);
+
+    while (SensorValue[CSensor] > COffset) {}
+    motor[motorB] = 0;
+}
+
+void moveRightPID()
+{
+    //Turn on right motor
+    motor[motorC] = 25;
+    motor[motorB] = 0;
+
+    wait1Msec(500);
+
+    while (SensorValue[BWSensor] > BWOffset) {}
+    motor[motorC] = 0;
+}
+
 /**
  * Our actual PD-task. This contains the main loop for keeping track where we are on the line.
  * We use some constants and our sensor values to calculate what the speed of our motors will have to be.
@@ -95,33 +108,6 @@ task startPID()
 		motor[motorC] = leftSpeed;
 		lastError = error;
 	}
-}
-
-/**
- * Turn on right motor until right sensor detects the line
- */
-void moveLeftPID()
-{
-	//Turn on right motor
-	motor[motorC] = 0;
-	motor[motorB] = 25;
-
-	wait1Msec(500);
-
-	while (SensorValue[CSensor] > COffset) {}
-	motor[motorB] = 0;
-}
-
-void moveRightPID()
-{
-	//Turn on right motor
-	motor[motorC] = 25;
-	motor[motorB] = 0;
-
-	wait1Msec(500);
-
-	while (SensorValue[BWSensor] > BWOffset) {}
-	motor[motorC] = 0;
 }
 
 /**
