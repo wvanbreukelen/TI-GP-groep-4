@@ -1,3 +1,5 @@
+#include <commands.h>
+
 /**
  * Maximum size of single bluetooth message
  */
@@ -16,14 +18,17 @@ const int inboxSize = 5;
  */
 int readBluetoothData(ubyte* buffer, int nMaxBufferSize)
 {
-  int sizeOfMessage = cCmdMessageGetSize(inboxSize);
+    // Get size of latest message
+    int sizeOfMessage = cCmdMessageGetSize(inboxSize);
 
-  if (sizeOfMessage > nMaxBufferSize)
-    sizeOfMessage = nMaxBufferSize;
-  if (sizeOfMessage > 0)
-    cCmdMessageRead(buffer, sizeOfMessage, inboxSize);
+    if (sizeOfMessage > nMaxBufferSize)
+        // Message size is above max buffer size, set the new buffer size
+        sizeOfMessage = nMaxBufferSize;
+    if (sizeOfMessage > 0)
+        // Place the message into out predefined ubyte buffer using a pointer
+        cCmdMessageRead(buffer, sizeOfMessage, inboxSize);
 
-  return sizeOfMessage;
+    return sizeOfMessage;
 }
 
 /**
