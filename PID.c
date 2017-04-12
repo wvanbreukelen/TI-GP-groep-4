@@ -94,7 +94,7 @@ void moveRightPID()
 task startPID()
 {
 	//We start off by initialising some constants.
-	const short Kp = 350;
+	const short Kp = 300;
 	const short Kd = 100;
 	//Our base speed on a straight line. This is lower for matrix mode.
 	const short Tp = (inMatrixMode) ? 15 : BASE_SPEED;

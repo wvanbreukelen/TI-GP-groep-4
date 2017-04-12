@@ -1,7 +1,7 @@
 #include <HeadSensor.h>
 #define C_WHEEL 17.593
-#define SONAR_DETECT 25
-
+#define SONAR_DETECT 20
+#define SONAR_DETECT_MATRIX 15
 /**
  * Check if a wall is detected
  * @param minDistCm Minimal distance to trigger wall
@@ -99,9 +99,15 @@ void avoid(int whereTo)
  */
 task avoidObjectsTask()
 {
+	//The distance at which we detect an object
+	short dist = SONAR_DETECT;
+	if (inMatrixMode)
+	{
+		dist = SONAR_DETECT_MATRIX;
+	}
 	while (1)
 	{
-		if (isWall(SONAR_DETECT - 5))
+		if (isWall(dist))
 		{
 			//  Object is detected, make a sound
 			startTask(soundErrorTask);
