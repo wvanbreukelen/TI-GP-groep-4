@@ -119,7 +119,7 @@ bool handleInput(ubyte* input)
 			// Toggle
 			isActive = !isActive;
 
-      break;
+			return isActive;
 		case 0x44:
       // Turn around
       stopAllMotors();
