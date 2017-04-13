@@ -118,13 +118,16 @@ bool handleInput(ubyte* input)
       while (onCrossRoads(SensorValue[BWSensor], SensorValue[CSensor])) {}
      	break;
     case 0x46:
-      if (isActive)
-  		{
-      	stopAllMotors();
-			}
-
-			// Toggle
+    	// Toggle
 			isActive = !isActive;
+
+      if (!isActive)
+  		{
+  			stopTask(startPID);
+  			motor[motorB] = 0;
+  			motor[motorC] = 0;
+      	//stopAllMotors();
+			}
 
 			return isActive;
 		case 0x44:
@@ -199,6 +202,8 @@ task commandHandlerTask()
             	enqueue(&q, (ubyte) nRcvBuffer);
         		} else {
         			stopTask(startPID);
+
+
 
         			if (handleInput(nRcvBuffer))
             	{
